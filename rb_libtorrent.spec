@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.11
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -65,11 +65,12 @@ rm -f docs/*.rst
 install -p -m 0644 COPYING COPYING.BSD
 install -p -m 0644 %{SOURCE2} COPYING.Boost
 install -p -m 0644 %{SOURCE3} COPYING.zlib
+## Fix the installed pkgconfig file: we don't need linkage that the
+## libtorrent DSO already takes care of. 
+sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in 
 
 
 %build
-## We don't need multiple zlib link options in the installed pkgconfig file.
-%{__sed} -i -e 's/@ZLIB@//' libtorrent.pc.in
 %configure --disable-static --enable-examples --with-zlib=system
 make %{?_smp_mflags}
 
@@ -114,6 +115,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jan 28 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-5
+- Fix installed pkgconfig file: Strip everything from Libs except for
+  '-ltorrent', as its [libtorrent's] DSO will ensure proper linking to other
+  needed libraries such as zlib and boost_thread. (Thanks to Michael Schwendt
+  and Mamoru Tasaka; bug #221372)
+
 * Sat Jan 27 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-4
 - Clarify potential licensing issues in the -devel subpackage:
   + COPYING.zlib
