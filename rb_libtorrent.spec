@@ -35,9 +35,8 @@ Group:		Development/Libraries
 License:	BSD, zlib/libpng License, Boost Software License
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
-## Same headers directory, pkgconfig file, and unsuffixed shared library
-## symlink. :(
-Conflicts:	libtorrent
+## Same pkgconfig file, and unsuffixed shared library symlink. :(
+Conflicts:	libtorrent-devel
 ## Needed for various headers retrieved via #include directives...
 Requires:	boost-devel
 Requires:	openssl-devel
@@ -81,7 +80,7 @@ make check
 
 %install
 rm -rf %{buildroot}
-## Ensure that we preserver our timestamps properly.
+## Ensure that we preserve our timestamps properly.
 export CPPROG="%{__cp} -p"
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
@@ -124,6 +123,9 @@ rm -rf %{buildroot}
 - Strip the @ZLIB@ (and thus, the extra '-lz' link option) from the installed
   pkgconfig file, as that is only useful when building a statically-linked
   libtorrent binary. 
+- Fix conflict: The -devel subpackage should conflict with the -devel
+  subpackage of libtorrent, not the main package.
+- Preserve timestamps in %%install.
 
 * Wed Jan 17 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-3
 - Fix License (GPL -> BSD)
