@@ -1,13 +1,13 @@
 Name:		rb_libtorrent
-Version:	0.11
-Release:	5%{?dist}
+Version:	0.12
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://dl.sourceforge.net/sourceforge/libtorrent/libtorrent-%{version}.tar.gz
+Source0:	http://www.libtorrent.org/libtorrent-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -16,20 +16,19 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	boost-devel
 BuildRequires:	zlib-devel
+BuildRequires:	libtool
 
 ## The following is taken from it's website listing...mostly.
 %description
 %{name} is a C++ library that aims to be a good alternative to all
 the other BitTorrent implementations around. It is a library and not a full
-featured client, although it comes with a working example client.
+featured client, although it comes with a few working example clients.
 
 Its main goals are to be very efficient (in terms of CPU and memory usage) as
-well as being very easy to use both as a user and developer. (Due to potential
-namespace conflicts, a couple of the examples had to be renamed. See the
-included documentation for more details.)
+well as being very easy to use both as a user and developer. 
 
 
-%package        devel
+%package 	devel
 Summary:	Development files for %{name}
 Group:		Development/Libraries
 License:	BSD, zlib/libpng License, Boost Software License
@@ -37,11 +36,11 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
 ## Same pkgconfig file, and unsuffixed shared library symlink. :(
 Conflicts:	libtorrent-devel
-## Needed for various headers retrieved via #include directives...
+## Needed for various headers used via #include directives...
 Requires:	boost-devel
 Requires:	openssl-devel
 
-%description    devel
+%description	devel
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
@@ -50,6 +49,19 @@ under the revised BSD, zlib/libpng, and Boost Public licenses. See the various
 COPYING files in the included documentation for the full text of these
 licenses, as well as the comments blocks in the source code for which license
 a given source or header file is released under.
+
+
+%package	examples
+Summary:	Example clients using %{name}
+Group:		Applications/Internet
+License:	BSD
+Requires:	%{name} = %{version}-%{release}
+
+%description	examples
+The %{name}-examples package contains example clients which intend to
+show how to make use of its various features. (Due to potential
+namespace conflicts, a couple of the examples had to be renamed. See the
+included documentation for more details.)
 
 
 %prep
@@ -66,13 +78,15 @@ install -p -m 0644 COPYING COPYING.BSD
 install -p -m 0644 %{SOURCE2} COPYING.Boost
 install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Fix the installed pkgconfig file: we don't need linkage that the
-## libtorrent DSO already takes care of. 
+## libtorrent DSO already ensures. 
 sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in 
 
 
 %build
 %configure --disable-static --enable-examples --with-zlib=system
-make %{?_smp_mflags}
+## Use the system libtool to ensure that we don't get unnecessary RPATH
+## hacks in our final build.
+make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
 
 
 %check
@@ -86,7 +100,7 @@ export CPPROG="%{__cp} -p"
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
 rename client torrent_client %{buildroot}%{_bindir}/*
-install -p -m 0644 %{SOURCE1} README-renames.Fedora 
+install -p -m 0644 %{SOURCE1} ./README-renames.Fedora 
 
 
 %clean
@@ -101,10 +115,14 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS ChangeLog COPYING README README-renames.Fedora
-%{_bindir}/*torrent*
+%doc AUTHORS ChangeLog COPYING README
 %{_libdir}/libtorrent.so.*
 %exclude %{_libdir}/*.la
+## Unfortunately (even with the "--disable-static" option to the %%configure
+## invocation) our use of the system libtool creates static libraries at build
+## time, so we must exclude them here.
+%exclude %{_libdir}/*.a
+
 
 %files devel
 %defattr(-,root,root,-)
@@ -113,8 +131,22 @@ rm -rf %{buildroot}
 %{_includedir}/libtorrent/
 %{_libdir}/libtorrent.so
 
+%files examples
+%doc COPYING README-renames.Fedora
+%{_bindir}/*torrent*
+
 
 %changelog
+* Thu Jun 07 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-1
+- Update to new upstream release (0.12 Final)
+- Split examples into a subpackage. Applications that use rb_libtorrent
+  don't need the example binaries installed; and splitting the package in this
+  manner is a bit more friendly to multilib environments.  
+
+* Sun Mar 11 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-0.rc1
+- Update to new upstream release (0.12 RC).
+- Forcibly use the system libtool to ensure that we remove any RPATH hacks.
+
 * Sun Jan 28 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-5
 - Fix installed pkgconfig file: Strip everything from Libs except for
   '-ltorrent', as its [libtorrent's] DSO will ensure proper linking to other
