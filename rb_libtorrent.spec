@@ -22,7 +22,7 @@ BuildRequires:	libtool
 %description
 %{name} is a C++ library that aims to be a good alternative to all
 the other BitTorrent implementations around. It is a library and not a full
-featured client, although it comes with a working example client.
+featured client, although it comes with a few working example clients.
 
 Its main goals are to be very efficient (in terms of CPU and memory usage) as
 well as being very easy to use both as a user and developer. 
@@ -36,7 +36,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
 ## Same pkgconfig file, and unsuffixed shared library symlink. :(
 Conflicts:	libtorrent-devel
-## Needed for various headers retrieved via #include directives...
+## Needed for various headers used via #include directives...
 Requires:	boost-devel
 Requires:	openssl-devel
 
@@ -140,8 +140,8 @@ rm -rf %{buildroot}
 * Thu Jun 07 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-1
 - Update to new upstream release (0.12 Final)
 - Split examples into a subpackage. Applications that use rb_libtorrent
-  generally don't need the example binaries installed; and splitting the
-  package in this manner is a bit more friendly to multilib environments.  
+  don't need the example binaries installed; and splitting the package in this
+  manner is a bit more friendly to multilib environments.  
 
 * Sun Mar 11 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-0.rc1
 - Update to new upstream release (0.12 RC).
