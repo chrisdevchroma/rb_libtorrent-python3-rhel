@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.12
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -31,7 +31,7 @@ well as being very easy to use both as a user and developer.
 %package 	devel
 Summary:	Development files for %{name}
 Group:		Development/Libraries
-License:	BSD, zlib/libpng License, Boost Software License
+License:	BSD and zlib/libpng License and Boost Software License
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
 ## Same pkgconfig file, and unsuffixed shared library symlink. :(
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Aug 03 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-2
+- Rebuild against new Boost libraries.
+
 * Thu Jun 07 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-1
 - Update to new upstream release (0.12 Final)
 - Split examples into a subpackage. Applications that use rb_libtorrent
