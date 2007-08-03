@@ -83,7 +83,12 @@ sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in
 
 
 %build
-%configure --disable-static --enable-examples --with-zlib=system
+%configure --disable-static --enable-examples --with-zlib=system	\
+	--with-boost-date-time=boost_date_time-mt 			\
+	--with-boost-filesystem=boost_filesystem-mt			\
+	--with-boost-thread=boost_thread-mt				\
+	--with-boost-regex=boost_regex-mt				\
+	--with-boost-program_options=boost_program_options-mt
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
 make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
