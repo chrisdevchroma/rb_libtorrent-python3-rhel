@@ -19,6 +19,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:	boost-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libtool
+## Necessary for 'rename'...
+BuildRequires:	util-linux-ng
 
 ## The following is taken from it's website listing...mostly.
 %description
