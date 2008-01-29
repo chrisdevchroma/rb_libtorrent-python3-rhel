@@ -1,0 +1,36 @@
+--- /branches/RC_0_12/include/libtorrent/bencode.hpp (revision 727)
++++ /branches/RC_0_12/include/libtorrent/bencode.hpp (revision 1968)
+@@ -201,6 +201,7 @@
+ 
+ 		template<class InIt>
+-		void bdecode_recursive(InIt& in, InIt end, entry& ret)
+-		{
++		void bdecode_recursive(InIt& in, InIt end, entry& ret, int depth)
++		{
++			if (depth >= 100) throw invalid_encoding();
+ 			if (in == end) throw invalid_encoding();
+ 			switch (*in)
+@@ -229,5 +230,5 @@
+ 					ret.list().push_back(entry());
+ 					entry& e = ret.list().back();
+-					bdecode_recursive(in, end, e);
++					bdecode_recursive(in, end, e, depth + 1);
+ 					if (in == end) throw invalid_encoding();
+ 				}
+@@ -245,7 +246,7 @@
+ 				{
+ 					entry key;
+-					bdecode_recursive(in, end, key);
++					bdecode_recursive(in, end, key, depth + 1);
+ 					entry& e = ret[key.string()];
+-					bdecode_recursive(in, end, e);
++					bdecode_recursive(in, end, e, depth + 1);
+ 					if (in == end) throw invalid_encoding();
+ 				}
+@@ -286,5 +287,5 @@
+ 		{
+ 			entry e;
+-			detail::bdecode_recursive(start, end, e);
++			detail::bdecode_recursive(start, end, e, 0);
+ 			return e;
+ 		}
