@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.12
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -12,11 +12,15 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
+Patch0: 	%{name}-svn1968-bdecode_recursive-security-fix.patch
+
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	boost-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libtool
+## Necessary for 'rename'...
+BuildRequires:	util-linux-ng
 
 ## The following is taken from it's website listing...mostly.
 %description
@@ -80,6 +84,9 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Fix the installed pkgconfig file: we don't need linkage that the
 ## libtorrent DSO already ensures. 
 sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in 
+## SECURITY: Fix potential stack overflow in bencode_recursive with
+## malformed messages. 
+%patch0 -p3 -b .bdecode_recursive-security-fix 
 
 
 %build
@@ -142,6 +149,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 28 2008 Peter Gordon <peter@thecodergeek.com> - 0.12-3
+- Add upstream patch (changeset 1968) to fix potential security vulnerability:
+  malformed messages passed through the bdecode_recursive routine could cause
+  a potential stack overflow.
+  + svn1968-bdecode_recursive-security-fix.patch
+
 * Fri Aug 03 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-2
 - Rebuild against new Boost libraries.
 
