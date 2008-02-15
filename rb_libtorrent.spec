@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
-Version:	0.12
-Release:	3%{?dist}
+Version:	0.12.1
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -12,7 +12,7 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
-Patch0: 	%{name}-svn1968-bdecode_recursive-security-fix.patch
+Patch0: 	%{name}-gcc43.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -70,6 +70,7 @@ included documentation for more details.)
 
 %prep
 %setup -q -n "libtorrent-%{version}"
+%patch0 -p0 -b .gcc43
 ## Some of the sources and docs are executable, which makes rpmlint against
 ## the resulting -debuginfo and -devel packages, respectively, quite angry. :]
 find src/ docs/ -type f -exec chmod a-x '{}' \;
@@ -84,9 +85,6 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Fix the installed pkgconfig file: we don't need linkage that the
 ## libtorrent DSO already ensures. 
 sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in 
-## SECURITY: Fix potential stack overflow in bencode_recursive with
-## malformed messages. 
-%patch0 -p3 -b .bdecode_recursive-security-fix 
 
 
 %build
@@ -128,13 +126,12 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING README
-%{_libdir}/libtorrent.so.*
 %exclude %{_libdir}/*.la
+%{_libdir}/libtorrent-%{version}.so
 ## Unfortunately (even with the "--disable-static" option to the %%configure
 ## invocation) our use of the system libtool creates static libraries at build
 ## time, so we must exclude them here.
 %exclude %{_libdir}/*.a
-
 
 %files devel
 %defattr(-,root,root,-)
@@ -149,6 +146,14 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Feb 09 2008 Peter Gordon <peter@thecodergeek.com> - 0.12.1-1
+- Update to new upstream bug-fix release (0.12.1)
+- Rebuild for GCC 4.3
+- Drop security fix patch (merged upstream):
+  - svn1968-bdecode_recursive-security-fix.patch
+- Add GCC 4.3 build fixes (based on patch from Adel Gadllah, bug 432778):
+  + gcc43.patch
+
 * Mon Jan 28 2008 Peter Gordon <peter@thecodergeek.com> - 0.12-3
 - Add upstream patch (changeset 1968) to fix potential security vulnerability:
   malformed messages passed through the bdecode_recursive routine could cause
