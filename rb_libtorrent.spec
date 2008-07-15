@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	0.12.1
+Version:	0.13.1
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -7,15 +7,14 @@ Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://www.libtorrent.org/libtorrent-%{version}.tar.gz
+Source0:	http://www.libtorrent.org/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
-Patch0: 	%{name}-gcc43.patch
-
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires:	asio-devel
 BuildRequires:	boost-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libtool
@@ -38,7 +37,7 @@ Group:		Development/Libraries
 License:	BSD and zlib/libpng License and Boost Software License
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
-## Same pkgconfig file, and unsuffixed shared library symlink. :(
+## Same include directory. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
 Requires:	boost-devel
@@ -55,26 +54,22 @@ licenses, as well as the comments blocks in the source code for which license
 a given source or header file is released under.
 
 
-%package	examples
-Summary:	Example clients using %{name}
-Group:		Applications/Internet
-License:	BSD
-Requires:	%{name} = %{version}-%{release}
 
-%description	examples
-The %{name}-examples package contains example clients which intend to
-show how to make use of its various features. (Due to potential
-namespace conflicts, a couple of the examples had to be renamed. See the
-included documentation for more details.)
+#package	examples
+#Summary:	Example clients using %{name}
+#Group:		Applications/Internet
+#License:	BSD
+#Requires:	%{name} = %{version}-%{release}
+
+#description	examples
+#The %{name}-examples package contains example clients which intend to
+#show how to make use of its various features. (Due to potential
+#namespace conflicts, a couple of the examples had to be renamed. See the
+#included documentation for more details.)
 
 
 %prep
-%setup -q -n "libtorrent-%{version}"
-%patch0 -p0 -b .gcc43
-## Some of the sources and docs are executable, which makes rpmlint against
-## the resulting -debuginfo and -devel packages, respectively, quite angry. :]
-find src/ docs/ -type f -exec chmod a-x '{}' \;
-find . -type f -regex '.*\.[hc]pp' -exec chmod a-x '{}' \;
+%setup -q -n "libtorrent-rasterbar-%{version}"
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -82,18 +77,24 @@ rm -f docs/*.rst
 install -p -m 0644 COPYING COPYING.BSD
 install -p -m 0644 %{SOURCE2} COPYING.Boost
 install -p -m 0644 %{SOURCE3} COPYING.zlib
-## Fix the installed pkgconfig file: we don't need linkage that the
-## libtorrent DSO already ensures. 
-sed -i -e 's/^Libs:.*$/Libs: -L${libdir} -ltorrent/' libtorrent.pc.in 
+## Finally, ensure that everything is UTF-8, as it should be.
+iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
+mv AUTHORS.iconv AUTHORS
 
 
 %build
-%configure --disable-static --enable-examples --with-zlib=system	\
-	--with-boost-date-time=boost_date_time-mt 			\
-	--with-boost-filesystem=boost_filesystem-mt			\
-	--with-boost-thread=boost_thread-mt				\
-	--with-boost-regex=boost_regex-mt				\
-	--with-boost-program_options=boost_program_options-mt
+## XXX: Even with the --with-asio=system configure option, the stuff in
+## the local include directory overrides that of the system. We don't like
+## local copies of system code. :)
+rm -rf include/libtorrent/asio*
+## FIXME: The examples currently fail to build (missing Makefile.in)
+%configure --disable-static --with-zlib=system		\
+	--with-boost-date-time=mt 			\
+	--with-boost-thread=mt				\
+	--with-boost-regex=mt				\
+	--with-boost-program_options=mt			\
+	--with-boost-filesystem=mt			\
+	--with-asio=system
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
 make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
@@ -127,7 +128,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING README
 %exclude %{_libdir}/*.la
-%{_libdir}/libtorrent-%{version}.so
+%{_libdir}/libtorrent-rasterbar.so.*
 ## Unfortunately (even with the "--disable-static" option to the %%configure
 ## invocation) our use of the system libtool creates static libraries at build
 ## time, so we must exclude them here.
@@ -136,16 +137,26 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %doc COPYING.Boost COPYING.BSD COPYING.zlib docs/ 
-%{_libdir}/pkgconfig/libtorrent.pc
+%{_libdir}/pkgconfig/libtorrent-rasterbar.pc
 %{_includedir}/libtorrent/
-%{_libdir}/libtorrent.so
+%{_libdir}/libtorrent-rasterbar.so
 
-%files examples
-%doc COPYING README-renames.Fedora
-%{_bindir}/*torrent*
+## Build failures...
+#files examples
+#doc COPYING README-renames.Fedora
+#{_bindir}/*torrent*
 
 
 %changelog
+* Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-1
+- Update to new upstream release (0.13.1): Contains an incompatible ABI/API
+  bump.
+- Drop GCC 4.3 patch (fixed upstream):
+  - gcc43.patch
+- Disable building the examples for now. (Attempted builds fail due to missing
+  Makefile support.) 
+- Drop the source permissions and pkgconfig file tweaks (fixed upstream).
+
 * Sat Feb 09 2008 Peter Gordon <peter@thecodergeek.com> - 0.12.1-1
 - Update to new upstream bug-fix release (0.12.1)
 - Rebuild for GCC 4.3
