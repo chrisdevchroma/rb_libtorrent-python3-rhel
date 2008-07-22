@@ -1,6 +1,9 @@
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -11,13 +14,18 @@ Source0:	http://www.libtorrent.org/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
+## Sent upstream via the libtorrent-discuss ML.
+## Message-Id: <1216701448.24546.11.camel@tuxhugs>
+Source4: 	%{name}-python-setup.py
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
-BuildRequires:	zlib-devel
 BuildRequires:	libtool
+BuildRequires:	python-devel
+BuildRequires:	python-setuptools
+BuildRequires:	zlib-devel
 ## Necessary for 'rename'...
 BuildRequires:	util-linux-ng
 
@@ -54,7 +62,6 @@ licenses, as well as the comments blocks in the source code for which license
 a given source or header file is released under.
 
 
-
 #package	examples
 #Summary:	Example clients using %{name}
 #Group:		Applications/Internet
@@ -66,6 +73,17 @@ a given source or header file is released under.
 #show how to make use of its various features. (Due to potential
 #namespace conflicts, a couple of the examples had to be renamed. See the
 #included documentation for more details.)
+
+
+%package	python
+Summary:	Python bindings for %{name}
+Group:		Development/Languages
+License:	Boost Software License
+Requires:	%{name} = %{version}-%{release}
+
+%description	python
+The %{name}-python package contains Python language bindings (the 'libtorrent'
+module) that allow it to be used from within Python applications.
 
 
 %prep
@@ -80,6 +98,8 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Finally, ensure that everything is UTF-8, as it should be.
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
+## Install the necessary build script for the python bindings module...
+install -p -m 0755 %{SOURCE4} bindings/python/setup.py
 
 
 %build
@@ -98,6 +118,12 @@ rm -rf include/libtorrent/asio*
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
 make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
+## Finally, build the python module.
+pushd bindings/python
+	CFLAGS="%{optflags}" %{__python} setup.py build
+	## Fix the interpreter for the example clients
+	sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' {simple_,}client.py 
+popd
 
 
 %check
@@ -110,8 +136,12 @@ rm -rf %{buildroot}
 export CPPROG="%{__cp} -p"
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
-rename client torrent_client %{buildroot}%{_bindir}/*
-install -p -m 0644 %{SOURCE1} ./README-renames.Fedora 
+#rename client torrent_client %{buildroot}%{_bindir}/*
+#install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
+## Install the python binding module.
+pushd bindings/python
+	%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+popd 
 
 
 %clean
@@ -134,7 +164,7 @@ rm -rf %{buildroot}
 ## time, so we must exclude them here.
 %exclude %{_libdir}/*.a
 
-%files devel
+%files	devel
 %defattr(-,root,root,-)
 %doc COPYING.Boost COPYING.BSD COPYING.zlib docs/ 
 %{_libdir}/pkgconfig/libtorrent-rasterbar.pc
@@ -146,8 +176,17 @@ rm -rf %{buildroot}
 #doc COPYING README-renames.Fedora
 #{_bindir}/*torrent*
 
+%files	python
+%defattr(-,root,root,-)
+%doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
+%{python_sitearch}/libtorrent-%{version}-py2.5.egg-info
+%{python_sitearch}/libtorrent.so
+
 
 %changelog
+* Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-2
+- Add python bindings in a -python subpackage. 
+
 * Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-1
 - Update to new upstream release (0.13.1): Contains an incompatible ABI/API
   bump.
