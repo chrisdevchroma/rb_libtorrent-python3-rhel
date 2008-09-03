@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -42,7 +42,7 @@ well as being very easy to use both as a user and developer.
 %package 	devel
 Summary:	Development files for %{name}
 Group:		Development/Libraries
-License:	BSD and zlib/libpng License and Boost Software License
+License:	BSD and zlib and Boost
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
 ## Same include directory. :(
@@ -78,7 +78,7 @@ a given source or header file is released under.
 %package	python
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
-License:	Boost Software License
+License:	Boost
 Requires:	%{name} = %{version}-%{release}
 
 %description	python
@@ -184,6 +184,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Sep  3 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0.13.1-3
+- fix license tag
+
 * Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-2
 - Add python bindings in a -python subpackage. 
 
