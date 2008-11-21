@@ -10,7 +10,9 @@ Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://www.libtorrent.org/libtorrent-rasterbar-%{version}.tar.gz
+## TODO: Source0 Should use SourceForge's file-mirroring URL upon update to
+## version 0.14+.
+Source0:	http://mirror.thecodergeek.com/src/libtorrent-rasterbar-0.13.1.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -184,6 +186,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Nov 20 2008 Peter Gordon <peter@thecodergeek.com>
+- Update Source0 URL, for now.
+
 * Wed Sep  3 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0.13.1-3
 - fix license tag
 
