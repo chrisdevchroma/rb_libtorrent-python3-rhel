@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -186,6 +186,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 0.13.1-4
+- Rebuild for Python 2.6
+
 * Thu Nov 20 2008 Peter Gordon <peter@thecodergeek.com>
 - Update Source0 URL, for now.
 
