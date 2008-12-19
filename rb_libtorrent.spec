@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -19,6 +19,7 @@ Source3:	%{name}-COPYING.zlib
 ## Sent upstream via the libtorrent-discuss ML.
 ## Message-Id: <1216701448.24546.11.camel@tuxhugs>
 Source4: 	%{name}-python-setup.py
+Patch1:         rb_libtorrent-0.13.1-boost.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -90,6 +91,7 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch1 -p3
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -116,6 +118,7 @@ rm -rf include/libtorrent/asio*
 	--with-boost-regex=mt				\
 	--with-boost-program_options=mt			\
 	--with-boost-filesystem=mt			\
+	--with-boost-system=mt				\
 	--with-asio=system
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
@@ -186,6 +189,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Dec 19 2008 Petr Machata <pmachata@redhat.com> - 0.13.1-7
+- Rebuild for boost-1.37.0.
+
 * Wed Dec 17 2008 Benjamin Kosnik  <bkoz@redhat.com> - 0.13.1-6
 - Rebuild for boost-1.37.0.
 

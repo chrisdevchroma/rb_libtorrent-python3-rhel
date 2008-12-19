@@ -1,0 +1,39 @@
+--- Miro-1.2.6/portable/libtorrent/include/libtorrent/disk_io_thread.hpp.boost	2008-08-15 00:50:40.000000000 -0400
++++ Miro-1.2.6/portable/libtorrent/include/libtorrent/disk_io_thread.hpp	2008-08-22 18:52:56.000000000 -0400
+@@ -37,6 +37,7 @@
+ #include "libtorrent/storage.hpp"
+ #include <boost/thread/thread.hpp>
+ #include <boost/function.hpp>
++#include <boost/thread/condition.hpp>
+ #include <boost/thread/mutex.hpp>
+ #include <boost/bind.hpp>
+ #include <boost/pool/pool.hpp>
+--- Miro-1.2.6/portable/libtorrent/src/torrent_info.cpp.boost	2008-08-15 00:50:41.000000000 -0400
++++ Miro-1.2.6/portable/libtorrent/src/torrent_info.cpp	2008-08-22 18:06:31.000000000 -0400
+@@ -352,7 +352,7 @@
+   		{
+  			m_name = tmp.leaf();
+   		}
+- 		else if (tmp.has_branch_path())
++ 		else if (tmp.has_parent_path())
+   		{
+  			fs::path p;
+  			for (fs::path::iterator i = tmp.begin()
+@@ -556,7 +556,7 @@
+ 	{
+ //		TORRENT_ASSERT(file.begin() != file.end());
+ 
+-		if (!file.has_branch_path())
++		if (!file.has_parent_path())
+ 		{
+ 			// you have already added at least one file with a
+ 			// path to the file (branch_path), which means that
+@@ -644,7 +644,7 @@
+ 					fs::path const* file_path;
+ 					if (i->orig_path) file_path = &(*i->orig_path);
+ 					else file_path = &i->path;
+-					TORRENT_ASSERT(file_path->has_branch_path());
++					TORRENT_ASSERT(file_path->has_parent_path());
+ 					TORRENT_ASSERT(*file_path->begin() == m_name);
+ 
+ 					for (fs::path::iterator j = boost::next(file_path->begin());
