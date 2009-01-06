@@ -1,0 +1,22 @@
+When building in a chroot (such as Fedora's Mock tool), using locate to find
+where the Python include directory is causes build failures, since the db file
+used by (m)locate does not yet exist.
+
+However, instead of manually calling updatedb, there is no need to even use
+locate at all since we already know that the properly-versioned include
+directory is under the toplevel $includedir (defined earlier by autotools), and
+is simply the same as the versioned Python binary ($ax_python_bin), so we can
+simply substitute the locate call with a direct path that functions identically.
+
+diff -up ./m4/ax_python.m4.old ./m4/ax_python.m4
+--- ./m4/ax_python.m4.old	2009-01-05 15:24:44.000000000 -0800
++++ ./m4/ax_python.m4	2009-01-05 15:25:31.000000000 -0800
+@@ -64,7 +64,7 @@ ax_python_bin=$PYTHON_BIN
+ if test x$ax_python_bin != x; then
+    AC_CHECK_LIB($ax_python_bin, main, ax_python_lib=$ax_python_bin, ax_python_lib=no)
+    AC_CHECK_HEADER([$ax_python_bin/Python.h],
+-   [[ax_python_header=`locate $ax_python_bin/Python.h | sed -e s,/Python.h,,`]],
++   [[ax_python_header=$includedir/$ax_python_bin]],
+    ax_python_header=no)
+    if test $ax_python_lib != no; then
+      if test $ax_python_header != no; then

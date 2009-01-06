@@ -1,0 +1,29 @@
+With Python 2.6 (in Fedora rawhide), the current trunk (and 0.14.1) fail to
+build the python bindings . I looked into it a bit more deeply and it seems that
+AM_PATH_PYTHON is called in configure.in:329 (to check for the python stuff),
+and that in turn uses the binary name as the top-level include directory to
+search for when attempting to locate the Python headers. However, the m4 file
+that defines the macro doesn't find the python2.6 executable because it doesn't
+have that python2.6 name in its list (m4/ax_python.m4:61), and so when it finds
+the unversioned "python" binary, it uses that as the directory name and thus
+fails to properly find the Python headers (which *are* in a versioned directory,
+e.g. "$includedir/python2.6/Python.h" - and not "$includedir/python/Python.h"
+as it then tries to use).
+
+The attached patch simply adds python2.6 to to the list, which after recreating
+the build files with the already-included autotool.sh script, makes the
+configure script properly find the python headers and thus makes the build
+successful.
+
+diff -up ./m4/ax_python.m4.old ./m4/ax_python.m4
+--- ./m4/ax_python.m4.old	2009-01-05 14:50:47.000000000 -0800
++++ ./m4/ax_python.m4	2009-01-05 14:51:02.000000000 -0800
+@@ -58,7 +58,7 @@
+ AC_DEFUN([AX_PYTHON],
+ [AC_MSG_CHECKING(for python build information)
+ AC_MSG_RESULT([])
+-for python in python2.5 python2.4 python2.3 python2.2 python2.1 python; do
++for python in python2.6 python2.5 python2.4 python2.3 python2.2 python2.1 python; do
+ AC_CHECK_PROGS(PYTHON_BIN, [$python])
+ ax_python_bin=$PYTHON_BIN
+ if test x$ax_python_bin != x; then

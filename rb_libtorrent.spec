@@ -2,24 +2,29 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.13.1
-Release:	7%{?dist}
+Version:	0.14.1
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-## TODO: Source0 Should use SourceForge's file-mirroring URL upon update to
-## version 0.14+.
-Source0:	http://mirror.thecodergeek.com/src/libtorrent-rasterbar-0.13.1.tar.gz
+Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-## Sent upstream via the libtorrent-discuss ML.
-## Message-Id: <1216701448.24546.11.camel@tuxhugs>
-Source4: 	%{name}-python-setup.py
-Patch1:         rb_libtorrent-0.13.1-boost.patch
+
+## Patch the included m4 Python detection to properly find the binary and
+## include directory for Python 2.6 support.
+## Upstream bug: http://code.rasterbar.com/libtorrent/ticket/466
+Patch0: 	%{name}-python26.patch
+
+## Using locate when we already know where the file is, is a bit silly and
+## fails miserably with chroot-based building, since the db file does not
+## yet exist.
+## Upstream bug: http://code.rasterbar.com/libtorrent/ticket/467
+Patch1: 	%{name}-configure-dont-use-locate.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -51,6 +56,7 @@ Requires:	pkgconfig
 ## Same include directory. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
+Requires:	asio-devel
 Requires:	boost-devel
 Requires:	openssl-devel
 
@@ -65,17 +71,17 @@ licenses, as well as the comments blocks in the source code for which license
 a given source or header file is released under.
 
 
-#package	examples
-#Summary:	Example clients using %{name}
-#Group:		Applications/Internet
-#License:	BSD
-#Requires:	%{name} = %{version}-%{release}
+%package	examples
+Summary:	Example clients using %{name}
+Group:		Applications/Internet
+License:	BSD
+Requires:	%{name} = %{version}-%{release}
 
-#description	examples
-#The %{name}-examples package contains example clients which intend to
-#show how to make use of its various features. (Due to potential
-#namespace conflicts, a couple of the examples had to be renamed. See the
-#included documentation for more details.)
+%description	examples
+The %{name}-examples package contains example clients which intend to
+show how to make use of its various features. (Due to potential
+namespace conflicts, a couple of the examples had to be renamed. See the
+included documentation for more details.)
 
 
 %package	python
@@ -91,7 +97,10 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch1 -p3
+%patch0 -b .python26
+%patch1 -b .dont-use-locate
+## We need to recreate the build scripts now that the M4 sources are patched.
+./autotool.sh 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -102,8 +111,6 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Finally, ensure that everything is UTF-8, as it should be.
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
-## Install the necessary build script for the python bindings module...
-install -p -m 0755 %{SOURCE4} bindings/python/setup.py
 
 
 %build
@@ -111,21 +118,22 @@ install -p -m 0755 %{SOURCE4} bindings/python/setup.py
 ## the local include directory overrides that of the system. We don't like
 ## local copies of system code. :)
 rm -rf include/libtorrent/asio*
-## FIXME: The examples currently fail to build (missing Makefile.in)
-%configure --disable-static --with-zlib=system		\
+%configure --disable-static				\
+	--enable-examples				\
+	--enable-python-binding				\
+	--with-asio=system				\
 	--with-boost-date-time=mt 			\
-	--with-boost-thread=mt				\
-	--with-boost-regex=mt				\
-	--with-boost-program_options=mt			\
 	--with-boost-filesystem=mt			\
+	--with-boost-program_options=mt			\
+	--with-boost-python=mt				\
+	--with-boost-regex=mt				\
 	--with-boost-system=mt				\
-	--with-asio=system
+	--with-boost-thread=mt				\
+	--with-zlib=system
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
 make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
-## Finally, build the python module.
 pushd bindings/python
-	CFLAGS="%{optflags}" %{__python} setup.py build
 	## Fix the interpreter for the example clients
 	sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' {simple_,}client.py 
 popd
@@ -141,8 +149,8 @@ rm -rf %{buildroot}
 export CPPROG="%{__cp} -p"
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
-#rename client torrent_client %{buildroot}%{_bindir}/*
-#install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
+rename client torrent_client %{buildroot}%{_bindir}/*
+install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 ## Install the python binding module.
 pushd bindings/python
 	%{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -176,19 +184,33 @@ rm -rf %{buildroot}
 %{_includedir}/libtorrent/
 %{_libdir}/libtorrent-rasterbar.so
 
-## Build failures...
-#files examples
-#doc COPYING README-renames.Fedora
-#{_bindir}/*torrent*
+%files examples
+%doc COPYING README-renames.Fedora
+%{_bindir}/*torrent*
+%{_bindir}/enum_if
 
 %files	python
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
-%{python_sitearch}/libtorrent-%{version}-py?.?.egg-info
+%{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 
 %changelog
+* Mon Jan 05 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.1-1
+- Update to new upstream release (0.14.1)
+- Add asio-devel as runtime dependency for the devel subpackage (#478589)
+- Add patch to build with Python 2.6:
+  + python26.patch
+- Add patch to make the configure script use the proper python include
+  directory instead of calling locate, as that can cause failures in a chroot
+  with no db file (and is a bit silly in the first place):
+  + configure-dont-use-locate.patch
+- Drop manual setup.py for building the python module (fixed upstream):
+  - setup.py
+- Update Source0 URL back to SourceForge's hosting.
+- Reenable the examples, since the Makefiles are fixed.
+
 * Fri Dec 19 2008 Petr Machata <pmachata@redhat.com> - 0.13.1-7
 - Rebuild for boost-1.37.0.
 
