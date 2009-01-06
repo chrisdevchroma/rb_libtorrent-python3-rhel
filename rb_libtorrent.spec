@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -50,6 +50,7 @@ Requires:	pkgconfig
 ## Same include directory. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
+Requires:	asio-devel
 Requires:	boost-devel
 Requires:	openssl-devel
 
@@ -181,11 +182,14 @@ rm -rf %{buildroot}
 %files	python
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
-%{python_sitearch}/libtorrent-%{version}-py2.5.egg-info
+%{python_sitearch}/libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 
 %changelog
+* Mon Jan 05 2009 Peter Gordon <peter@thecodergeek.com> - 0.13.1-4
+- Add asio-devel as runtime dependency for the devel subpackage (#478589)
+
 * Thu Nov 20 2008 Peter Gordon <peter@thecodergeek.com>
 - Update Source0 URL, for now.
 
