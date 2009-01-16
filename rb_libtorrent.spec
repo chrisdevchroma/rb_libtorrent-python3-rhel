@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.14.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -197,6 +197,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jan 16 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.1-2
+- Rebuild for the soname bump in openssl-0.9.8j
+
 * Mon Jan 05 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.1-1
 - Update to new upstream release (0.14.1)
 - Add asio-devel as runtime dependency for the devel subpackage (#478589)
