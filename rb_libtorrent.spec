@@ -2,8 +2,8 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.1
-Release:	2%{?dist}
+Version:	0.14.2
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -14,17 +14,6 @@ Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{vers
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-
-## Patch the included m4 Python detection to properly find the binary and
-## include directory for Python 2.6 support.
-## Upstream bug: http://code.rasterbar.com/libtorrent/ticket/466
-Patch0: 	%{name}-python26.patch
-
-## Using locate when we already know where the file is, is a bit silly and
-## fails miserably with chroot-based building, since the db file does not
-## yet exist.
-## Upstream bug: http://code.rasterbar.com/libtorrent/ticket/467
-Patch1: 	%{name}-configure-dont-use-locate.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -97,10 +86,6 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch0 -b .python26
-%patch1 -b .dont-use-locate
-## We need to recreate the build scripts now that the M4 sources are patched.
-./autotool.sh 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -197,6 +182,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Feb 20 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.2-1
+- Update to new upstream bug-fix release (0.14.2)
+- Drop Python 2.6 and configure fix patches (fixed upstream):
+  - python26.patch
+  - configure-dont-use-locate.patch
+
 * Fri Jan 16 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.1-2
 - Rebuild for the soname bump in openssl-0.9.8j
 
