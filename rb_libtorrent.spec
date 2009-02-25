@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.14.2
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Fri Feb 20 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.2-1
 - Update to new upstream bug-fix release (0.14.2)
 - Drop Python 2.6 and configure fix patches (fixed upstream):
