@@ -2,8 +2,8 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.2
-Release:	2%{?dist}
+Version:	0.14.3
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Apr 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-1
+- Update to new upstream bug-fix release (0.14.3).
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
