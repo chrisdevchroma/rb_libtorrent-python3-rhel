@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.14.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri May 08 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-2
+- Rebuild for the Boost 1.39.0 update.
+
 * Mon Apr 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-1
 - Update to new upstream bug-fix release (0.14.3).
 
