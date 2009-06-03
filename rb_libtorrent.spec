@@ -2,8 +2,8 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.3
-Release:	2%{?dist}
+Version:	0.14.4
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -107,7 +107,6 @@ rm -rf include/libtorrent/asio*
 	--enable-examples				\
 	--enable-python-binding				\
 	--with-asio=system				\
-	--with-boost-date-time=mt 			\
 	--with-boost-filesystem=mt			\
 	--with-boost-program_options=mt			\
 	--with-boost-python=mt				\
@@ -182,6 +181,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Jun 02 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.4-1
+- Update to new upstream release (0.14.4).
+- Drop outdated Boost patch.
+
 * Fri May 08 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-2
 - Rebuild for the Boost 1.39.0 update.
 
