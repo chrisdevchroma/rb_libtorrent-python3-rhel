@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.14.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -14,6 +14,8 @@ Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{vers
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
+
+Patch0: 	%{name}-CVE-2009-1760.diff
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -86,6 +88,7 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0  -b .CVE-2009-1760
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -96,6 +99,7 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 ## Finally, ensure that everything is UTF-8, as it should be.
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
+
 
 
 %build
@@ -182,6 +186,14 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jun 12 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-2
+- Apply upstream patch to fix CVE-2009-1760 (arbitrary file overwrite
+  vulnerability):
+  + CVE-2009-1760.diff
+- Fixes security bug #505523.
+- Drop outdated Boost patch:
+  - 0.13.1-boost.patch
+
 * Mon Apr 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.3-1
 - Update to new upstream bug-fix release (0.14.3).
 
