@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.13.1
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -19,6 +19,8 @@ Source3:	%{name}-COPYING.zlib
 ## Sent upstream via the libtorrent-discuss ML.
 ## Message-Id: <1216701448.24546.11.camel@tuxhugs>
 Source4: 	%{name}-python-setup.py
+
+Patch0: 	%{name}-0.13-CVE-2009-1760.diff
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -91,6 +93,7 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -b .CVE-2009-1760
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -187,6 +190,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jun 14 2009 Peter Gordon <peter@thecodergeek.com> - 0.13.1-5
+- Apply upstream patch to fix CVE-2009-1760 (arbitrary file overwrite
+  vulnerability):
+  + 0.13-CVE-2009-1760.diff
+- Fixes security bug #505523.
+
 * Mon Jan 05 2009 Peter Gordon <peter@thecodergeek.com> - 0.13.1-4
 - Add asio-devel as runtime dependency for the devel subpackage (#478589)
 
