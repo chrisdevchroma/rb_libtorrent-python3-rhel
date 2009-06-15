@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.12.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -13,6 +13,7 @@ Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
 Patch0: 	%{name}-gcc43.patch
+Patch1: 	%{name}-0.12-CVE-2009-1760.diff
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -41,6 +42,7 @@ Requires:	pkgconfig
 ## Same pkgconfig file, and unsuffixed shared library symlink. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
+Requires:	asio-devel
 Requires:	boost-devel
 Requires:	openssl-devel
 
@@ -71,6 +73,7 @@ included documentation for more details.)
 %prep
 %setup -q -n "libtorrent-%{version}"
 %patch0 -p0 -b .gcc43
+%patch1 -p0 -b .CVE-2009-1760
 ## Some of the sources and docs are executable, which makes rpmlint against
 ## the resulting -debuginfo and -devel packages, respectively, quite angry. :]
 find src/ docs/ -type f -exec chmod a-x '{}' \;
@@ -146,6 +149,13 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jun 14 2009 Peter Gordon <peter@thecodergeek.com> - 0.12.1-2
+- Apply backported upstream patch to fix CVE-2009-1760 (arbitrary file
+  overwrite vulnerability):
+  + 0.12-CVE-2009-1760.diff
+- Fixes security bug #505523.
+- Add asio-devel as runtime dependency for the devel subpackage (#478589)
+
 * Sat Feb 09 2008 Peter Gordon <peter@thecodergeek.com> - 0.12.1-1
 - Update to new upstream bug-fix release (0.12.1)
 - Rebuild for GCC 4.3
