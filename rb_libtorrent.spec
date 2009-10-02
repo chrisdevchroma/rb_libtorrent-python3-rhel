@@ -2,8 +2,8 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.4
-Release:	3%{?dist}
+Version:	0.14.6
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -19,6 +19,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
+BuildRequires:	GeoIP-devel
 BuildRequires:	libtool
 BuildRequires:	python-devel
 BuildRequires:	python-setuptools
@@ -113,6 +114,7 @@ rm -rf include/libtorrent/asio*
 	--with-boost-regex=mt				\
 	--with-boost-system=mt				\
 	--with-boost-thread=mt				\
+	--with-libgeoip=system				\
 	--with-zlib=system
 ## Use the system libtool to ensure that we don't get unnecessary RPATH
 ## hacks in our final build.
@@ -181,6 +183,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Sep 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.6-1
+- Update to new upstream release (0.14.6)
+- Build against system GeoIP libraries.
+	
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 0.14.4-3
 - rebuilt with new openssl
 
