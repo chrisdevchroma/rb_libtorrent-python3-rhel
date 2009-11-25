@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.6
+Version:	0.14.7
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -183,6 +183,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Nov 25 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.7-1
+- Update to new upstream release (0.14.7)
+- Resolves: #541026 (rb_libtorrent 0.14.6 crashes)
+
 * Sun Sep 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.6-1
 - Update to new upstream release (0.14.6)
 - Build against system GeoIP libraries.
