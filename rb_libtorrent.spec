@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.8
+Version:	0.14.9
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -10,7 +10,7 @@ Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -183,6 +183,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
+- Update to new upstream release (0.14.9)
+- Fix source URL
+
 * Tue Jan 12 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.8-1
 - Update to new upstream release (0.14.8)
 
