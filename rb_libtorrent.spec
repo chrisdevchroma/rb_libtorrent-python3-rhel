@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.9
+Version:	0.14.10
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -183,6 +183,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
+- Update to new upstream release (0.14.10)
+
 * Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
 - Update to new upstream release (0.14.9)
 - Fix source URL
