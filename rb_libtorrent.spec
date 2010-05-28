@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:		rb_libtorrent
-Version:	0.14.8
+Version:	0.14.10
 Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -10,7 +10,7 @@ Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -171,21 +171,29 @@ rm -rf %{buildroot}
 %{_libdir}/libtorrent-rasterbar.so
 
 %files examples
+%defattr (-,root,root,-)
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
 %{_bindir}/enum_if
 
 %files	python
-%defattr(-,root,root,-)
+%defattr (-,root,root,-)
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 
 %changelog
-* Tue Jan 19 2010 Ville Skyttä <ville.skytta@iki.fi> - 0.14.8-2
-- Rebuild per
-  http://lists.fedoraproject.org/pipermail/devel/2010-January/129500.html
+* Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
+- Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
+- Add default attributes to examples 
+
+* Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
+- Update to new upstream release (0.14.10)
+
+* Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
+- Update to new upstream release (0.14.9)
+- Fix source URL
 
 * Tue Jan 12 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.8-1
 - Update to new upstream release (0.14.8)
