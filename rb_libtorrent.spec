@@ -1,9 +1,6 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-
 Name:		rb_libtorrent
 Version:	0.14.10
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -14,8 +11,8 @@ Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch0:		rb_libtorrent-am.patch
+Patch1:		rb_libtorrent-in.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -87,6 +84,9 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
+%patch1 -p1
+
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -184,6 +184,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-3
+- Patch from Bruno Wolff III to fix DSO linking rhbz565082
+- Update spec to match current guidelines
+
 * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
 - Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
 - Add default attributes to examples 
