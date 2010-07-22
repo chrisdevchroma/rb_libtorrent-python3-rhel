@@ -3,7 +3,7 @@
 
 Name:		rb_libtorrent
 Version:	0.14.8
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -183,6 +183,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 0.14.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
 * Tue Jan 19 2010 Ville Skyttä <ville.skytta@iki.fi> - 0.14.8-2
 - Rebuild per
   http://lists.fedoraproject.org/pipermail/devel/2010-January/129500.html
