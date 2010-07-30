@@ -1,21 +1,22 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-
 Name:		rb_libtorrent
-Version:	0.14.8
-Release:	3%{?dist}
+Version:	0.14.10
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
 
-Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch0:		rb_libtorrent-am.patch
+Patch1:		rb_libtorrent-in.patch
+# Not needed for 0.15.1
+Patch2:		rb_libtorrent-0.14.10-py27.patch
+# Seems still needed for 0.15.1
+Patch3:		rb_libtorrent-0.14.10-gcc45.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -87,6 +88,12 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1 -b .py27
+touch configure
+%patch3 -p1 -b .gcc45
+
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
 rm -f docs/*.rst
@@ -103,6 +110,15 @@ mv AUTHORS.iconv AUTHORS
 ## XXX: Even with the --with-asio=system configure option, the stuff in
 ## the local include directory overrides that of the system. We don't like
 ## local copies of system code. :)
+
+## FIXME
+## FIXME
+## There are lots of warning about breaking aliasing rules, so
+## for now compiling with -fno-strict-aliasing. Please check if
+## newer version fixes this.
+export CFLAGS="%{optflags} -fno-strict-aliasing"
+export CXXFLAGS="%{optflags} -fno-strict-aliasing"
+
 rm -rf include/libtorrent/asio*
 %configure --disable-static				\
 	--enable-examples				\
@@ -171,18 +187,39 @@ rm -rf %{buildroot}
 %{_libdir}/libtorrent-rasterbar.so
 
 %files examples
+%defattr (-,root,root,-)
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
 %{_bindir}/enum_if
 
 %files	python
-%defattr(-,root,root,-)
+%defattr (-,root,root,-)
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 
 %changelog
+* Thu Jul 29 2010 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 0.14.10-4
+- Copy from F-13 branch (F-14 branch still used 0.14.8)
+  Changelogs from F-13:
+    * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-3
+    - Patch from Bruno Wolff III to fix DSO linking rhbz565082
+    - Update spec to match current guidelines
+
+    * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
+    - Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
+    - Add default attributes to examples 
+
+    * Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
+    - Update to new upstream release (0.14.10)
+
+    * Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
+    - Update to new upstream release (0.14.9)
+    - Fix source URL
+- Patch for python2.7 and g++4.5
+- Pass -fno-strict-aliasing for now
+
 * Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 0.14.8-3
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
