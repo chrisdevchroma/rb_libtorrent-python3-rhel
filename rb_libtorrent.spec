@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
-Version:	0.14.10
-Release:	4%{?dist}
+Version:	0.14.11
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -11,12 +11,14 @@ Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
+# fix DSO problems
 Patch0:		rb_libtorrent-am.patch
 Patch1:		rb_libtorrent-in.patch
-# Not needed for 0.15.1
-Patch2:		rb_libtorrent-0.14.10-py27.patch
+# fix build against python27, Not needed for 0.15.1
+Patch2:		rb_libtorrent-0.14.10-py27-am.patch
+Patch3:		rb_libtorrent-0.14.10-py27.patch
 # Seems still needed for 0.15.1
-Patch3:		rb_libtorrent-0.14.10-gcc45.patch
+Patch4:		rb_libtorrent-0.14.10-gcc45.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -44,7 +46,7 @@ Group:		Development/Libraries
 License:	BSD and zlib and Boost
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
-## Same include directory. :(
+## FIXME: Same include directory. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
 Requires:	asio-devel
@@ -88,11 +90,12 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch0 -p1
+## patch0 and patch2 touch automake-related files
+#patch0 -p1
 %patch1 -p1
-%patch2 -p1 -b .py27
-touch configure
-%patch3 -p1 -b .gcc45
+#patch2 -p1 -b .py27-am
+%patch3 -p1 -b .py27
+%patch4 -p1 -b .gcc45
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -105,12 +108,22 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
 
+## Fix the interpreter for the example clients
+sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' bindings/python/{simple_,}client.py
 
-%build
+# safer and less side-effects than using LIBTOOL=/usr/bin/libtool -- Rex
+# else, can use the autoreconf -i hammer
+%if "%{_libdir}" != "/usr/lib"
+sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
+%endif
+
 ## XXX: Even with the --with-asio=system configure option, the stuff in
 ## the local include directory overrides that of the system. We don't like
 ## local copies of system code. :)
+rm -rf include/libtorrent/asio*
 
+
+%build
 ## FIXME
 ## FIXME
 ## There are lots of warning about breaking aliasing rules, so
@@ -119,8 +132,8 @@ mv AUTHORS.iconv AUTHORS
 export CFLAGS="%{optflags} -fno-strict-aliasing"
 export CXXFLAGS="%{optflags} -fno-strict-aliasing"
 
-rm -rf include/libtorrent/asio*
-%configure --disable-static				\
+%configure \
+	--disable-static				\
 	--enable-examples				\
 	--enable-python-binding				\
 	--with-asio=system				\
@@ -132,13 +145,8 @@ rm -rf include/libtorrent/asio*
 	--with-boost-thread=mt				\
 	--with-libgeoip=system				\
 	--with-zlib=system
-## Use the system libtool to ensure that we don't get unnecessary RPATH
-## hacks in our final build.
-make %{?_smp_mflags} LIBTOOL=%{_bindir}/libtool
-pushd bindings/python
-	## Fix the interpreter for the example clients
-	sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' {simple_,}client.py 
-popd
+
+make %{?_smp_mflags}
 
 
 %check
@@ -158,6 +166,12 @@ pushd bindings/python
 	%{__python} setup.py install -O1 --skip-build --root %{buildroot}
 popd 
 
+## unpackged files
+# .la files
+rm -fv %{buildroot}%{_libdir}/lib*.la
+# static libs
+rm -fv %{buildroot}%{_libdir}/lib*.a
+
 
 %clean
 rm -rf %{buildroot}
@@ -165,19 +179,13 @@ rm -rf %{buildroot}
 
 %post -p /sbin/ldconfig
 
-
 %postun -p /sbin/ldconfig
 
 
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING README
-%exclude %{_libdir}/*.la
-%{_libdir}/libtorrent-rasterbar.so.*
-## Unfortunately (even with the "--disable-static" option to the %%configure
-## invocation) our use of the system libtool creates static libraries at build
-## time, so we must exclude them here.
-%exclude %{_libdir}/*.a
+%{_libdir}/libtorrent-rasterbar.so.5*
 
 %files	devel
 %defattr(-,root,root,-)
@@ -200,28 +208,29 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Aug 25 2010 Rex Dieter <rdieter@fedoraproject.org> - 0.14.11-1
+- rb_libtorrent-0.14.11
+- track lib soname
+
 * Thu Jul 29 2010 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 0.14.10-4
-- Copy from F-13 branch (F-14 branch still used 0.14.8)
-  Changelogs from F-13:
-    * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-3
-    - Patch from Bruno Wolff III to fix DSO linking rhbz565082
-    - Update spec to match current guidelines
-
-    * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
-    - Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
-    - Add default attributes to examples 
-
-    * Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
-    - Update to new upstream release (0.14.10)
-
-    * Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
-    - Update to new upstream release (0.14.9)
-    - Fix source URL
 - Patch for python2.7 and g++4.5
 - Pass -fno-strict-aliasing for now
+- Copy from F-13 branch (F-14 branch still used 0.14.8)
 
-* Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 0.14.8-3
-- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+* Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-3
+- Patch from Bruno Wolff III to fix DSO linking rhbz565082
+- Update spec to match current guidelines
+
+* Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
+- Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
+- Add default attributes to examples 
+
+* Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
+- Update to new upstream release (0.14.10)
+
+* Fri Mar 12 2010 leigh scott <leigh123linux@googlemail.com> - 0.14.9-1
+- Update to new upstream release (0.14.9)
+- Fix source URL
 
 * Tue Jan 19 2010 Ville Skyttä <ville.skytta@iki.fi> - 0.14.8-2
 - Rebuild per
