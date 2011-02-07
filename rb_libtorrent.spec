@@ -132,6 +132,9 @@ rm -rf include/libtorrent/asio*
 export CFLAGS="%{optflags} -fno-strict-aliasing"
 export CXXFLAGS="%{optflags} -fno-strict-aliasing"
 
+export CFLAGS="$CFLAGS -DBOOST_FILESYSTEM_VERSION=2"
+export CXXFLAGS="$CXXFLAGS -DBOOST_FILESYSTEM_VERSION=2"
+
 %configure \
 	--disable-static				\
 	--enable-examples				\
@@ -208,6 +211,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Feb 08 2011 Mamoru Tasaka <mtasaka@fedoraproject.org>
+- Add -DBOOST_FILESYSTEM_VERSION=2
+
 * Sun Feb 06 2011 Thomas Spura <tomspur@fedoraproject.org> - 0.14.11-2
 - rebuild for new boost
 
