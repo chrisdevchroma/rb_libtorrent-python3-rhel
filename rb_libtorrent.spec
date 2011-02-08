@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.14.11
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -122,6 +122,9 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 ## local copies of system code. :)
 rm -rf include/libtorrent/asio*
 
+# Use boost filesystem 2 explicitly (bug 654807)
+sed -i -e '/Cflags:/s|^\(.*\)$|\1 -DBOOST_FILESYSTEM_VERSION=2|' \
+	libtorrent-rasterbar.pc.in
 
 %build
 ## FIXME
@@ -132,6 +135,7 @@ rm -rf include/libtorrent/asio*
 export CFLAGS="%{optflags} -fno-strict-aliasing"
 export CXXFLAGS="%{optflags} -fno-strict-aliasing"
 
+# Use boost filesystem 2 explicitly (bug 654807)
 export CFLAGS="$CFLAGS -DBOOST_FILESYSTEM_VERSION=2"
 export CXXFLAGS="$CXXFLAGS -DBOOST_FILESYSTEM_VERSION=2"
 
@@ -211,8 +215,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Feb 08 2011 Mamoru Tasaka <mtasaka@fedoraproject.org> - 0.14.11-3
+- Add -DBOOST_FILESYSTEM_VERSION=2 also in pkgconfig .pc file
+  (bug 654807, Leigh Scott)
+
 * Tue Feb 08 2011 Mamoru Tasaka <mtasaka@fedoraproject.org>
-- Add -DBOOST_FILESYSTEM_VERSION=2
+- Add -DBOOST_FILESYSTEM_VERSION=2 (bug 654807)
 
 * Sun Feb 06 2011 Thomas Spura <tomspur@fedoraproject.org> - 0.14.11-2
 - rebuild for new boost
