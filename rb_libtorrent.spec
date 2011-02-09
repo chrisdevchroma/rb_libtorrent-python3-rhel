@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.14.11
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -215,6 +215,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.11-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Tue Feb 08 2011 Mamoru Tasaka <mtasaka@fedoraproject.org> - 0.14.11-3
 - Add -DBOOST_FILESYSTEM_VERSION=2 also in pkgconfig .pc file
   (bug 654807, Leigh Scott)
