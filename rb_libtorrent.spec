@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
-Version:	0.14.11
-Release:	4%{?dist}
+Version:	0.15.5
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -11,14 +11,6 @@ Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-# fix DSO problems
-Patch0:		rb_libtorrent-am.patch
-Patch1:		rb_libtorrent-in.patch
-# fix build against python27, Not needed for 0.15.1
-Patch2:		rb_libtorrent-0.14.10-py27-am.patch
-Patch3:		rb_libtorrent-0.14.10-py27.patch
-# Seems still needed for 0.15.1
-Patch4:		rb_libtorrent-0.14.10-gcc45.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -90,12 +82,6 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-## patch0 and patch2 touch automake-related files
-#patch0 -p1
-%patch1 -p1
-#patch2 -p1 -b .py27-am
-%patch3 -p1 -b .py27
-%patch4 -p1 -b .gcc45
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -192,7 +178,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING README
-%{_libdir}/libtorrent-rasterbar.so.5*
+%{_libdir}/libtorrent-rasterbar.so.6*
 
 %files	devel
 %defattr(-,root,root,-)
@@ -215,6 +201,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Feb 10 2011 Mamoru Tasaka <mtasaka@fedoraproject.org> - 0.15.5-1
+- Update to 0.15.5 (bug 654807, Leigh Scott)
+
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.11-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
@@ -223,7 +212,7 @@ rm -rf %{buildroot}
   (bug 654807, Leigh Scott)
 
 * Tue Feb 08 2011 Mamoru Tasaka <mtasaka@fedoraproject.org>
-- Add -DBOOST_FILESYSTEM_VERSION=2 (bug 654807)
+- Add -DBOOST_FILESYSTEM_VERSION=2
 
 * Sun Feb 06 2011 Thomas Spura <tomspur@fedoraproject.org> - 0.14.11-2
 - rebuild for new boost
