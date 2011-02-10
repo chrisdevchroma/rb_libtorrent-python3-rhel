@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.15.5
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -44,6 +44,7 @@ Conflicts:	libtorrent-devel
 Requires:	asio-devel
 Requires:	boost-devel
 Requires:	openssl-devel
+Requires:	GeoIP-devel
 
 %description	devel
 The %{name}-devel package contains libraries and header files for
@@ -201,6 +202,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Feb 10 2011 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 0.15.5-2
+- Add "R: GeoIP-devel" to -devel subpackage
+
 * Thu Feb 10 2011 Mamoru Tasaka <mtasaka@fedoraproject.org> - 0.15.5-1
 - Update to 0.15.5 (bug 654807, Leigh Scott)
 
