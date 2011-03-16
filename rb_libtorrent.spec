@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.15.5
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -202,6 +202,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Mar 16 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.5-3
+- rebuild for boost 1.46
+
 * Thu Feb 10 2011 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 0.15.5-2
 - Add "R: GeoIP-devel" to -devel subpackage
 
