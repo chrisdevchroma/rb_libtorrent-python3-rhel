@@ -203,7 +203,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Apr 06 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.5-4
-- reallty build against boost 1.46.1
+- really build against boost 1.46.1
 
 * Wed Mar 16 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.5-3
 - rebuild for boost 1.46.1
