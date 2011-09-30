@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	0.15.7
+Version:	0.15.8
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -202,6 +202,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Sep 30 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.8-1
+- Update to 0.15.8
+
 * Mon Aug 01 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.7-1
 - Update to 0.15.7
 
