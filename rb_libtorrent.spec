@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.15.8
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -188,6 +188,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 
 %changelog
+* Sun Nov 20 2011 Thomas Spura <tomspur@fedoraproject.org> - 0.15.8-2
+- rebuild for https://fedoraproject.org/wiki/Features/F17Boost148
+
 * Fri Sep 30 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.8-1
 - Update to 0.15.8
 
