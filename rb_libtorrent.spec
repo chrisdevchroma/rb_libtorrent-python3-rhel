@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	0.15.8
+Version:	0.15.9
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -19,8 +19,7 @@ BuildRequires:	libtool
 BuildRequires:	python-devel
 BuildRequires:	python-setuptools
 BuildRequires:	zlib-devel
-## Necessary for 'rename'...
-BuildRequires:	util-linux-ng
+BuildRequires:	util-linux
 
 ## The following is taken from it's website listing...mostly.
 %description
@@ -142,13 +141,10 @@ export CXXFLAGS="$CXXFLAGS -DBOOST_FILESYSTEM_VERSION=2"
 
 make %{?_smp_mflags}
 
-
 %check
 make check
 
-
 %install
-rm -rf %{buildroot}
 ## Ensure that we preserve our timestamps properly.
 export CPPROG="%{__cp} -p"
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
@@ -166,42 +162,35 @@ rm -fv %{buildroot}%{_libdir}/lib*.la
 # static libs
 rm -fv %{buildroot}%{_libdir}/lib*.a
 
-
-%clean
-rm -rf %{buildroot}
-
-
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
-
 %files
-%defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING README
 %{_libdir}/libtorrent-rasterbar.so.6*
 
 %files	devel
-%defattr(-,root,root,-)
 %doc COPYING.Boost COPYING.BSD COPYING.zlib docs/ 
 %{_libdir}/pkgconfig/libtorrent-rasterbar.pc
 %{_includedir}/libtorrent/
 %{_libdir}/libtorrent-rasterbar.so
 
 %files examples
-%defattr (-,root,root,-)
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
 %{_bindir}/enum_if
 
 %files	python
-%defattr (-,root,root,-)
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 
 %changelog
+* Tue Mar 20 2012 leigh scott <leigh123linux@googlemail.com> - 0.15.9-1
+- Update to 0.15.9
+
 * Fri Sep 30 2011 Leigh Scott <leigh123linux@googlemail.com> - 0.15.8-1
 - Update to 0.15.8
 
