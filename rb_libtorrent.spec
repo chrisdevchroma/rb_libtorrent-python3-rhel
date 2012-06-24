@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	0.15.9
+Version:	0.16.1
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -103,14 +103,6 @@ sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' bindings/python/{simple_,}clien
 sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 %endif
 
-## XXX: Even with the --with-asio=system configure option, the stuff in
-## the local include directory overrides that of the system. We don't like
-## local copies of system code. :)
-rm -rf include/libtorrent/asio*
-
-# Use boost filesystem 2 explicitly (bug 654807)
-sed -i -e '/Cflags:/s|^\(.*\)$|\1 -DBOOST_FILESYSTEM_VERSION=2|' \
-	libtorrent-rasterbar.pc.in
 
 %build
 ## FIXME
@@ -121,25 +113,15 @@ sed -i -e '/Cflags:/s|^\(.*\)$|\1 -DBOOST_FILESYSTEM_VERSION=2|' \
 export CFLAGS="%{optflags} -fno-strict-aliasing"
 export CXXFLAGS="%{optflags} -fno-strict-aliasing"
 
-# Use boost filesystem 2 explicitly (bug 654807)
-export CFLAGS="$CFLAGS -DBOOST_FILESYSTEM_VERSION=2"
-export CXXFLAGS="$CXXFLAGS -DBOOST_FILESYSTEM_VERSION=2"
-
 %configure \
 	--disable-static				\
 	--enable-examples				\
 	--enable-python-binding				\
-	--with-asio=system				\
-	--with-boost-filesystem=mt			\
-	--with-boost-program_options=mt			\
 	--with-boost-python=mt				\
-	--with-boost-regex=mt				\
 	--with-boost-system=mt				\
-	--with-boost-thread=mt				\
-	--with-libgeoip=system				\
-	--with-zlib=system
+	--with-libgeoip=system				
 
-make %{?_smp_mflags}
+make V=1 %{?_smp_mflags}
 
 %check
 make check
@@ -180,6 +162,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
 %{_bindir}/enum_if
+%{_bindir}/parse_*
+%{_bindir}/rss_reader
+%{_bindir}/utp_test
 
 %files	python
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
@@ -188,6 +173,11 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 
 %changelog
+* Sun Jun 24 2012 leigh scott <leigh123linux@googlemail.com> - 0.16.1-1
+- Update to 0.16.1
+- Remove the -DBOOST_FILESYSTEM_VERSION=2 bits from spec
+- Remove unused configure options
+
 * Tue Mar 20 2012 leigh scott <leigh123linux@googlemail.com> - 0.15.9-1
 - Update to 0.15.9
 
