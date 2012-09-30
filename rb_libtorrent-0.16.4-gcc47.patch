@@ -1,0 +1,11 @@
+--- a/tools/parse_hash_fails.cpp
++++ b/tools/parse_hash_fails.cpp
+@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+ #include <stdlib.h>
+-#include <string>
++#include <cstring>
+ #include "libtorrent/file.hpp"
+ 
+ using namespace libtorrent;
