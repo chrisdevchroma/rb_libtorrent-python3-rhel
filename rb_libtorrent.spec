@@ -12,6 +12,8 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
+Patch0:         rb_libtorrent-0.16.4-gcc47.patch
+
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
 BuildRequires:	GeoIP-devel
@@ -82,6 +84,7 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -161,6 +164,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %files examples
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
+%{_bindir}/connection_tester
 %{_bindir}/enum_if
 %{_bindir}/parse_*
 %{_bindir}/rss_reader
@@ -175,6 +179,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %changelog
 * Sun Sep 30 2012 Leigh Scott <leigh123linux@googlemail.com> - 0.16.4-1
 - Update to 0.16.4
+- Patch for gcc error
 
 * Mon Aug 20 2012 Leigh Scott <leigh123linux@googlemail.com> - 0.16.3-1
 - Update to 0.16.3
