@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.16.7
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -175,6 +175,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 
 %changelog
+* Sun Feb 10 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> - 0.16.7-3
+- Rebuild for Boost-1.53.0
+
 * Sat Feb 09 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> - 0.16.7-2
 - Rebuild for Boost-1.53.0
 
