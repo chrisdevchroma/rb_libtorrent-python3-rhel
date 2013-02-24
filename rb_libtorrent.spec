@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
-Version:	0.16.7
-Release:	3%{?dist}
+Version:	0.16.8
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -106,14 +106,6 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 
 
 %build
-## FIXME
-## FIXME
-## There are lots of warning about breaking aliasing rules, so
-## for now compiling with -fno-strict-aliasing. Please check if
-## newer version fixes this.
-export CFLAGS="%{optflags} -fno-strict-aliasing"
-export CXXFLAGS="%{optflags} -fno-strict-aliasing"
-
 %configure \
 	--disable-static				\
 	--enable-examples				\
@@ -167,14 +159,18 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{_bindir}/parse_*
 %{_bindir}/rss_reader
 %{_bindir}/utp_test
+%{_bindir}/fragmentation_test
+%{_bindir}/upnp_test
 
 %files	python
 %doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
-
 %changelog
+* Sun Feb 24 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.8-1
+- upstream release 0.16.8
+
 * Sun Feb 10 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> - 0.16.7-3
 - Rebuild for Boost-1.53.0
 
