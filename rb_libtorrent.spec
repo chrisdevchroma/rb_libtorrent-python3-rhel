@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	0.16.8
+Version:	0.16.9
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -77,8 +77,9 @@ License:	Boost
 Requires:	%{name} = %{version}-%{release}
 
 %description	python
-The %{name}-python package contains Python language bindings (the 'libtorrent'
-module) that allow it to be used from within Python applications.
+The %{name}-python package contains Python language bindings
+(the 'libtorrent'module) that allow it to be used from within 
+Python applications.
 
 
 %prep
@@ -163,11 +164,14 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{_bindir}/upnp_test
 
 %files	python
-%doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
+%doc AUTHORS ChangeLog COPYING.Boost
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Thu May 09 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.9-1
+- upstream release 0.16.9
+
 * Sun Feb 24 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.8-1
 - upstream release 0.16.8
 
