@@ -111,8 +111,8 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 	--disable-static				\
 	--enable-examples				\
 	--enable-python-binding				\
-	--with-boost-python=mt				\
-	--with-boost-system=mt				\
+	--with-boost-system=boost_system		\
+	--with-boost-python=boost_python		\
 	--with-libgeoip=system				
 
 make V=1 %{?_smp_mflags}
@@ -169,8 +169,10 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
-* Sat Jul 27 2013 pmachata@redhat.com - 0.16.10-2
+* Sat Jul 27 2013 Petr Machata <pmachata@redhat.com> - 0.16.10-2
 - Rebuild for boost 1.54.0
+- Change configure invocation to avoid Boost -mt libraries, which are
+  not enabled anymore.
 
 * Mon May 13 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.10-1
 - upstream release 0.16.10
