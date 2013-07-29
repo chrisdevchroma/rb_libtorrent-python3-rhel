@@ -12,6 +12,7 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-0.16.10-boost_mt.patch
+Patch1:		%{name}-0.16.10-boost_noncopyable.patch
 
 
 BuildRequires:	asio-devel
@@ -86,6 +87,7 @@ Python applications.
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
+%patch1 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -177,6 +179,8 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
   not enabled anymore.
 - Adjust libtorrent-rasterbar.pc to not mention -mt
   (rb_libtorrent-0.16.10-boost_mt.patch)
+- Add a missing Boost.Noncopyable include
+  (rb_libtorrent-0.16.10-boost_noncopyable.patch)
 
 * Mon May 13 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.10-1
 - upstream release 0.16.10
