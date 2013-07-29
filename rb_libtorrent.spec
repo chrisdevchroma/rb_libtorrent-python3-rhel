@@ -11,6 +11,7 @@ Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
+Patch0:		%{name}-0.16.10-boost_mt.patch
 
 
 BuildRequires:	asio-devel
@@ -84,6 +85,7 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -173,6 +175,8 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 - Rebuild for boost 1.54.0
 - Change configure invocation to avoid Boost -mt libraries, which are
   not enabled anymore.
+- Adjust libtorrent-rasterbar.pc to not mention -mt
+  (rb_libtorrent-0.16.10-boost_mt.patch)
 
 * Mon May 13 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.10-1
 - upstream release 0.16.10
