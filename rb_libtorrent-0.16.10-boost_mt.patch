@@ -3,7 +3,7 @@ diff -up libtorrent-rasterbar-0.16.10/libtorrent-rasterbar.pc~ libtorrent-raster
 +++ libtorrent-rasterbar-0.16.10/libtorrent-rasterbar.pc	2013-07-29 13:27:13.782077808 +0200
 @@ -12,5 +12,5 @@ Name: libtorrent-rasterbar
  Description: Bittorrent library.
- Version: 0.16.10
+ Version: 0.16.11
  Libs: -L${libdir} -ltorrent-rasterbar
 -Libs.private:   -lboost_system-mt  -lssl -lcrypto  
 +Libs.private:   -lboost_system  -lssl -lcrypto  
