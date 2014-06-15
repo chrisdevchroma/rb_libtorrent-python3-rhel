@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	0.16.8
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -12,6 +12,8 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 
+# https://github.com/qbittorrent/qBittorrent/issues/1758
+Patch0:          %{name}-0.16.8-upnp_remove_port0..patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -83,6 +85,7 @@ module) that allow it to be used from within Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -168,6 +171,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sun Jun 15 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.8-2
+- patch to stop UPNP from openning port 0
+
 * Sun Feb 24 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.8-1
 - upstream release 0.16.8
 
