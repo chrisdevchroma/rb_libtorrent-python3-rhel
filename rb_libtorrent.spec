@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
-Version:	0.16.16
-Release:	4%{?dist}
+Version:	0.16.17
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -12,8 +12,6 @@ Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-0.16.16-boost_mt.patch
 Patch1:		%{name}-0.16.10-boost_noncopyable.patch
-# https://github.com/qbittorrent/qBittorrent/issues/1758
-Patch2:          %{name}-0.16.16-upnp_remove_port0..patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -88,7 +86,6 @@ Python applications.
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -174,6 +171,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sun Jun 22 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.17-1
+- upstream release 0.16.17
+
 * Sun Jun 15 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.16-4
 - patch to stop UPNP from openning port 0
 
