@@ -1,0 +1,12 @@
+diff -up libtorrent-rasterbar-0.16.10/include/libtorrent/disk_buffer_pool.hpp~ libtorrent-rasterbar-0.16.10/include/libtorrent/disk_buffer_pool.hpp
+--- libtorrent-rasterbar-0.16.10/include/libtorrent/disk_buffer_pool.hpp~	2013-03-17 09:15:20.000000000 +0100
++++ libtorrent-rasterbar-0.16.10/include/libtorrent/disk_buffer_pool.hpp	2013-07-29 14:57:23.010100826 +0200
+@@ -38,6 +38,8 @@ POSSIBILITY OF SUCH DAMAGE.
+ #include "libtorrent/session_settings.hpp"
+ #include "libtorrent/allocator.hpp"
+ 
++#include <boost/noncopyable.hpp>
++
+ #ifdef TORRENT_DISK_STATS
+ #include <fstream>
+ #endif

@@ -1,19 +1,17 @@
 Name:		rb_libtorrent
-Version:	0.16.8
+Version:	0.16.17
 Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-
-Source0:	http://libtorrent.googlecode.com/files/libtorrent-rasterbar-%{version}.tar.gz
+Source0:        http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-
-# https://github.com/qbittorrent/qBittorrent/issues/1758
-Patch0:          %{name}-0.16.8-upnp_remove_port0..patch
+Patch0:		%{name}-0.16.16-boost_mt.patch
+Patch1:		%{name}-0.16.10-boost_noncopyable.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -79,13 +77,15 @@ License:	Boost
 Requires:	%{name} = %{version}-%{release}
 
 %description	python
-The %{name}-python package contains Python language bindings (the 'libtorrent'
-module) that allow it to be used from within Python applications.
+The %{name}-python package contains Python language bindings
+(the 'libtorrent'module) that allow it to be used from within 
+Python applications.
 
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
+%patch1 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -113,8 +113,8 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 	--disable-static				\
 	--enable-examples				\
 	--enable-python-binding				\
-	--with-boost-python=mt				\
-	--with-boost-system=mt				\
+	--with-boost-system=boost_system		\
+	--with-boost-python=boost_python		\
 	--with-libgeoip=system				
 
 make V=1 %{?_smp_mflags}
@@ -166,13 +166,50 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{_bindir}/upnp_test
 
 %files	python
-%doc AUTHORS ChangeLog COPYING.Boost bindings/python/{simple_,}client.py
+%doc AUTHORS ChangeLog COPYING.Boost
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 %changelog
-* Sun Jun 15 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.8-2
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.16.17-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Sun Jun 22 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.17-1
+- upstream release 0.16.17
+
+* Sun Jun 15 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.16-4
 - patch to stop UPNP from openning port 0
+
+* Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.16.16-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Thu May 22 2014 Petr Machata <pmachata@redhat.com> - 0.16.16-2
+- Rebuild for boost 1.55.0
+
+* Mon Apr 21 2014 Leigh Scott <leigh123linux@googlemail.com> - 0.16.16-1
+- upstream release 0.16.16
+- fix source url
+
+* Sun Aug 18 2013 Leigh Scott <leigh123linux@googlemail.com> - 0.16.11-1
+- upstream release 0.16.11
+
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.16.10-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
+* Sat Jul 27 2013 Petr Machata <pmachata@redhat.com> - 0.16.10-2
+- Rebuild for boost 1.54.0
+- Change configure invocation to avoid Boost -mt libraries, which are
+  not enabled anymore.
+- Adjust libtorrent-rasterbar.pc to not mention -mt
+  (rb_libtorrent-0.16.10-boost_mt.patch)
+- Add a missing Boost.Noncopyable include
+  (rb_libtorrent-0.16.10-boost_noncopyable.patch)
+
+* Mon May 13 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.10-1
+- upstream release 0.16.10
+
+* Thu May 09 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.9-1
+- upstream release 0.16.9
 
 * Sun Feb 24 2013 Rahul Sundaram <sundaram@fedoraproject.org> - 0.16.8-1
 - upstream release 0.16.8
