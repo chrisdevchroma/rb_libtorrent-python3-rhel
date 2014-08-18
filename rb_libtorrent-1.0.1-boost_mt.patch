@@ -1,9 +1,9 @@
---- libtorrent-rasterbar-0.16.16/libtorrent-rasterbar.pc~	2014-03-23 19:26:09.000000000 +0000
-+++ libtorrent-rasterbar-0.16.16/libtorrent-rasterbar.pc	2014-04-21 10:18:31.153443147 +0100
+--- libtorrent-rasterbar-1.0.1/libtorrent-rasterbar.pc	2014-08-04 04:05:26.000000000 +0100
++++ libtorrent-rasterbar-1.0.1/libtorrent-rasterbar.pc	2014-08-18 17:39:22.658036935 +0100
 @@ -11,6 +11,6 @@ package=libtorrent-rasterbar
  Name: libtorrent-rasterbar
  Description: Bittorrent library.
- Version: 0.16.17
+ Version: 1.0.1
 -Libs: -L${libdir} -ltorrent-rasterbar -lboost_system-mt 
 +Libs: -L${libdir} -ltorrent-rasterbar -lboost_system
  Libs.private:    -lssl -lcrypto 

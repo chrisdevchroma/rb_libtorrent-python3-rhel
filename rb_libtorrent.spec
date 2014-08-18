@@ -1,17 +1,17 @@
 Name:		rb_libtorrent
-Version:	0.16.17
-Release:	2%{?dist}
+Version:	1.0.1
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:        http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:         http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-Patch0:		%{name}-0.16.16-boost_mt.patch
-Patch1:		%{name}-0.16.10-boost_noncopyable.patch
+Patch0:		%{name}-1.0.1-boost_mt.patch
+Patch1:		%{name}-1.0.1-boost_noncopyable.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -110,12 +110,13 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 
 %build
 %configure \
-	--disable-static				\
-	--enable-examples				\
-	--enable-python-binding				\
+	--disable-static			\
+	--enable-examples			\
+	--enable-python-binding			\
 	--with-boost-system=boost_system		\
 	--with-boost-python=boost_python		\
-	--with-libgeoip=system				
+	--with-libgeoip=system			\
+	--with-libiconv
 
 make V=1 %{?_smp_mflags}
 
@@ -146,7 +147,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 %files
 %doc AUTHORS ChangeLog COPYING README
-%{_libdir}/libtorrent-rasterbar.so.7*
+%{_libdir}/libtorrent-rasterbar.so.8*
 
 %files	devel
 %doc COPYING.Boost COPYING.BSD COPYING.zlib docs/ 
@@ -158,11 +159,8 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %doc COPYING README-renames.Fedora
 %{_bindir}/*torrent*
 %{_bindir}/connection_tester
-%{_bindir}/enum_if
 %{_bindir}/parse_*
 %{_bindir}/rss_reader
-%{_bindir}/utp_test
-%{_bindir}/fragmentation_test
 %{_bindir}/upnp_test
 
 %files	python
@@ -171,6 +169,10 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Mon Aug 18 2014 Leigh Scott <leigh123linux@googlemail.com> - 1.0.1-1
+- upstream release 1.0.1
+- update patches
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.16.17-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
