@@ -1,5 +1,5 @@
 Name:		rb_libtorrent
-Version:	1.0.2
+Version:	1.0.3
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
@@ -10,8 +10,7 @@ Source0:         http://downloads.sourceforge.net/libtorrent/libtorrent-rasterba
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-Patch0:		%{name}-1.0.1-boost_mt.patch
-Patch1:		%{name}-1.0.1-boost_noncopyable.patch
+Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -85,7 +84,6 @@ Python applications.
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
-%patch1 -p1
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -109,14 +107,15 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 
 
 %build
-%configure \
+%configure					\
 	--disable-static			\
 	--enable-examples			\
 	--enable-python-binding			\
-	--with-boost-system=boost_system		\
-	--with-boost-python=boost_python		\
+	--with-boost-system=boost_system	\
+	--with-boost-python=boost_python	\
 	--with-libgeoip=system			\
-	--with-libiconv
+	--with-libiconv				\
+        --enable-export-all
 
 make V=1 %{?_smp_mflags}
 
@@ -169,6 +168,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Fri Dec 19 2014 Leigh Scott <leigh123linux@googlemail.com> - 1.0.3-1
+- upstream release 1.0.3
+
 * Tue Sep 16 2014 Leigh Scott <leigh123linux@googlemail.com> - 1.0.2-1
 - upstream release 1.0.2
 
