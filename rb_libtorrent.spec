@@ -1,6 +1,6 @@
 Name:		rb_libtorrent
 Version:	1.0.4
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -168,6 +168,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Wed Jul 22 2015 David Tardon <dtardon@redhat.com> - 1.0.4-3
+- rebuild for Boost 1.58
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.4-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
