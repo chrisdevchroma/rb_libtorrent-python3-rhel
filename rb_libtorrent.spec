@@ -1,12 +1,12 @@
 Name:		rb_libtorrent
-Version:	1.0.4
-Release:	3%{?dist}
+Version:	1.0.5
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:         http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -115,7 +115,7 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 	--with-boost-python=boost_python	\
 	--with-libgeoip=system			\
 	--with-libiconv				\
-        --enable-export-all
+	--enable-export-all
 
 make V=1 %{?_smp_mflags}
 
@@ -168,6 +168,10 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sun Jul 26 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.5-1
+- Upstream release 1.0.5
+- Lint the spec file
+
 * Wed Jul 22 2015 David Tardon <dtardon@redhat.com> - 1.0.4-3
 - rebuild for Boost 1.58
 
