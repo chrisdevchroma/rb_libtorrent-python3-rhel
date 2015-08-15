@@ -1,12 +1,17 @@
+# we don't want to provide private python extension libs
+%filter_provides_in %{python_sitearch}/.*\.so$ 
+# actually set up the filtering
+%filter_setup
+
 Name:		rb_libtorrent
-Version:	1.0.5
-Release:	2%{?dist}
+Version:	1.0.6
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:	http://downloads.sourceforge.net/libtorrent/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_6/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -14,11 +19,11 @@ Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
-BuildRequires:	GeoIP-devel
-BuildRequires:	libtool
-BuildRequires:	python-devel
+BuildRequires:	pkgconfig(geoip)
+BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(python2)
 BuildRequires:	python-setuptools
-BuildRequires:	zlib-devel
+BuildRequires:	libtool
 BuildRequires:	util-linux
 
 ## The following is taken from it's website listing...mostly.
@@ -35,15 +40,14 @@ well as being very easy to use both as a user and developer.
 Summary:	Development files for %{name}
 Group:		Development/Libraries
 License:	BSD and zlib and Boost
-Requires:	%{name} = %{version}-%{release}
-Requires:	pkgconfig
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 ## FIXME: Same include directory. :(
 Conflicts:	libtorrent-devel
 ## Needed for various headers used via #include directives...
 Requires:	asio-devel
 Requires:	boost-devel
-Requires:	openssl-devel
-Requires:	GeoIP-devel
+Requires:	pkgconfig(openssl)
+Requires:	pkgconfig(geoip)
 
 %description	devel
 The %{name}-devel package contains libraries and header files for
@@ -60,7 +64,7 @@ a given source or header file is released under.
 Summary:	Example clients using %{name}
 Group:		Applications/Internet
 License:	BSD
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	examples
 The %{name}-examples package contains example clients which intend to
@@ -73,7 +77,7 @@ included documentation for more details.)
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	python
 The %{name}-python package contains Python language bindings
@@ -125,13 +129,13 @@ make check
 %install
 ## Ensure that we preserve our timestamps properly.
 export CPPROG="%{__cp} -p"
-make install DESTDIR=%{buildroot} INSTALL="%{__install} -c -p"
+%{make_install}
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
 rename client torrent_client %{buildroot}%{_bindir}/*
 install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 ## Install the python binding module.
 pushd bindings/python
-	%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+	%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 popd 
 
 ## unpackged files
@@ -145,17 +149,20 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %postun -p /sbin/ldconfig
 
 %files
-%doc AUTHORS ChangeLog COPYING README
+%doc AUTHORS ChangeLog README
+%license COPYING
 %{_libdir}/libtorrent-rasterbar.so.8*
 
 %files	devel
-%doc COPYING.Boost COPYING.BSD COPYING.zlib docs/ 
+%doc docs/
+%license COPYING.Boost COPYING.BSD COPYING.zlib
 %{_libdir}/pkgconfig/libtorrent-rasterbar.pc
 %{_includedir}/libtorrent/
 %{_libdir}/libtorrent-rasterbar.so
 
 %files examples
-%doc COPYING README-renames.Fedora
+%doc README-renames.Fedora
+%license COPYING
 %{_bindir}/*torrent*
 %{_bindir}/connection_tester
 %{_bindir}/parse_*
@@ -163,11 +170,21 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{_bindir}/upnp_test
 
 %files	python
-%doc AUTHORS ChangeLog COPYING.Boost
+%doc AUTHORS ChangeLog
+%license COPYING.Boost
 %{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sat Aug 15 2015 Leigh Scott <leigh123linux@googlemail.com> - 1.0.6-1
+- Upstream release 1.0.6
+- Change source URL
+- Install license files properly
+- Remove pkgconfig requires
+- Clean up requires
+- Filter private-shared-object-provides on python sub-package
+- Specify version for python buildrequires
+
 * Wed Jul 29 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Changes/F23Boost159
 
