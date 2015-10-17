@@ -5,7 +5,7 @@
 
 Name:		rb_libtorrent
 Version:	1.0.6
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -16,9 +16,11 @@ Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
+Patch1:		%{name}-1.0.6-system-tommath.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
+BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
@@ -88,6 +90,8 @@ Python applications.
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
+%patch1 -p1
+rm include/libtorrent/tommath* src/mpi.c
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -176,6 +180,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sat Oct 17 2015 Ville Skyttä <ville.skytta@iki.fi> - 1.0.6-3
+- Link with system tommath, drop bundled one
+
 * Thu Aug 27 2015 Jonathan Wakely <jwakely@redhat.com> - 1.0.6-2
 - Rebuilt for Boost 1.59
 
