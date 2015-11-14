@@ -4,14 +4,14 @@
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.0.6
-Release:	3%{?dist}
+Version:	1.0.7
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_6/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_7/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -180,6 +180,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Sat Nov 14 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-1
+- Upstream release 1.0.7
+
 * Sat Oct 17 2015 Ville Skyttä <ville.skytta@iki.fi> - 1.0.6-3
 - Link with system tommath, drop bundled one
 
