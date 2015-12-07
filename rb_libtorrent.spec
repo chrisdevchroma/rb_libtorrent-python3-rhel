@@ -4,21 +4,23 @@
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.0.6
-Release:	1%{?dist}
+Version:	1.0.7
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_6/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_7/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
+Patch1:		%{name}-1.0.6-system-tommath.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
+BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
@@ -88,6 +90,8 @@ Python applications.
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
 %patch0 -p1
+%patch1 -p1
+rm include/libtorrent/tommath* src/mpi.c
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -100,8 +104,8 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
 
-## Fix the interpreter for the example clients
-sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' bindings/python/{simple_,}client.py
+## Fix the interpreter for python 2
+sed -i -e 's:^#!/usr/bin/env python$:#!/usr/bin/python2:' bindings/python/*.py
 
 # safer and less side-effects than using LIBTOOL=/usr/bin/libtool -- Rex
 # else, can use the autoreconf -i hammer
@@ -149,7 +153,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %postun -p /sbin/ldconfig
 
 %files
-%doc AUTHORS ChangeLog README
+%doc AUTHORS ChangeLog
 %license COPYING
 %{_libdir}/libtorrent-rasterbar.so.8*
 
@@ -176,6 +180,19 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Mon Dec 07 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-2
+- Fixes to make it work properly with python2 on F24+
+- Remove README since is not shipped any more
+
+* Sat Nov 14 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-1
+- Upstream release 1.0.7
+
+* Sat Oct 17 2015 Ville Skyttä <ville.skytta@iki.fi> - 1.0.6-3
+- Link with system tommath, drop bundled one
+
+* Thu Aug 27 2015 Jonathan Wakely <jwakely@redhat.com> - 1.0.6-2
+- Rebuilt for Boost 1.59
+
 * Sat Aug 15 2015 Leigh Scott <leigh123linux@googlemail.com> - 1.0.6-1
 - Upstream release 1.0.6
 - Change source URL
