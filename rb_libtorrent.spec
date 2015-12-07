@@ -5,7 +5,7 @@
 
 Name:		rb_libtorrent
 Version:	1.0.7
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -104,8 +104,8 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
 
-## Fix the interpreter for the example clients
-sed -i -e 's:^#!/bin/python$:#!/usr/bin/python:' bindings/python/{simple_,}client.py
+## Fix the interpreter for python 2
+sed -i -e 's:^#!/usr/bin/env python$:#!/usr/bin/python2:' bindings/python/*.py
 
 # safer and less side-effects than using LIBTOOL=/usr/bin/libtool -- Rex
 # else, can use the autoreconf -i hammer
@@ -153,7 +153,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %postun -p /sbin/ldconfig
 
 %files
-%doc AUTHORS ChangeLog README
+%doc AUTHORS ChangeLog
 %license COPYING
 %{_libdir}/libtorrent-rasterbar.so.8*
 
@@ -180,6 +180,10 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python_sitearch}/libtorrent.so
 
 %changelog
+* Mon Dec 07 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-2
+- Fixes to make it work properly with python2 on F24+
+- Remove README since is not shipped any more
+
 * Sat Nov 14 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-1
 - Upstream release 1.0.7
 
