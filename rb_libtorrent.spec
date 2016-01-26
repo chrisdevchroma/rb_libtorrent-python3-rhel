@@ -181,7 +181,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 %changelog
 * Tue Jan 26 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.8-1
-- Upstream release 1.0.7
+- Upstream release 1.0.8
 
 * Fri Jan 15 2016 Jonathan Wakely <jwakely@redhat.com> - 1.0.7-3
 - Rebuilt for Boost 1.60
