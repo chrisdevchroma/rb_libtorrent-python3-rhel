@@ -1,17 +1,28 @@
+%if 0%{?rhel}
+%global with_python3 0
+%{!?__python2: %global __python2 /usr/bin/python2}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
+%{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
+%else
+%global with_python3 1
+%endif
+
 # we don't want to provide private python extension libs
 %filter_provides_in %{python_sitearch}/.*\.so$ 
 # actually set up the filtering
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.0.8
+Version:	1.0.9
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_8/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_9/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -24,7 +35,11 @@ BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
-BuildRequires:	python-setuptools
+BuildRequires:	python2-setuptools
+%if 0%{?with_python3}
+BuildRequires:	pkgconfig(python3)
+BuildRequires:	python3-setuptools
+%endif # with_python3
 BuildRequires:	libtool
 BuildRequires:	util-linux
 
@@ -36,7 +51,6 @@ featured client, although it comes with a few working example clients.
 
 Its main goals are to be very efficient (in terms of CPU and memory usage) as
 well as being very easy to use both as a user and developer. 
-
 
 %package 	devel
 Summary:	Development files for %{name}
@@ -61,7 +75,6 @@ COPYING files in the included documentation for the full text of these
 licenses, as well as the comments blocks in the source code for which license
 a given source or header file is released under.
 
-
 %package	examples
 Summary:	Example clients using %{name}
 Group:		Applications/Internet
@@ -74,18 +87,31 @@ show how to make use of its various features. (Due to potential
 namespace conflicts, a couple of the examples had to be renamed. See the
 included documentation for more details.)
 
+%package	python2
+Summary:	Python bindings for %{name}
+Group:		Development/Languages
+License:	Boost
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Provides:   %{name}-python
+Obsoletes:  %{name}-python < 1.0.9
 
-%package	python
+%description	python2
+The %{name}-python2 package contains Python language bindings
+(the 'libtorrent' module) that allow it to be used from within
+Python applications.
+
+%if 0%{?with_python3}
+%package	python3
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
-%description	python
-The %{name}-python package contains Python language bindings
-(the 'libtorrent'module) that allow it to be used from within 
+%description	python3
+The %{name}-python3 package contains Python language bindings
+(the 'libtorrent' module) that allow it to be used from within
 Python applications.
-
+%endif # with_python3
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
@@ -104,25 +130,21 @@ install -p -m 0644 %{SOURCE3} COPYING.zlib
 iconv -t UTF-8 -f ISO_8859-15 AUTHORS -o AUTHORS.iconv
 mv AUTHORS.iconv AUTHORS
 
-## Fix the interpreter for python 2
-sed -i -e 's:^#!/usr/bin/env python$:#!/usr/bin/python2:' bindings/python/*.py
-
 # safer and less side-effects than using LIBTOOL=/usr/bin/libtool -- Rex
 # else, can use the autoreconf -i hammer
 %if "%{_libdir}" != "/usr/lib"
 sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 %endif
 
-
 %build
-%configure					\
-	--disable-static			\
-	--enable-examples			\
-	--enable-python-binding			\
-	--with-boost-system=boost_system	\
-	--with-boost-python=boost_python	\
-	--with-libgeoip=system			\
-	--with-libiconv				\
+%configure \
+	--disable-static \
+	--enable-examples \
+	--enable-python-binding \
+	--with-boost-system=boost_system \
+	--with-boost-python=boost_python \
+	--with-libgeoip=system \
+	--with-libiconv \
 	--enable-export-all
 
 make V=1 %{?_smp_mflags}
@@ -139,7 +161,10 @@ rename client torrent_client %{buildroot}%{_bindir}/*
 install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 ## Install the python binding module.
 pushd bindings/python
-	%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
+%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
+%if 0%{?with_python3}
+%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+%endif # with_python3
 popd 
 
 ## unpackged files
@@ -153,6 +178,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %postun -p /sbin/ldconfig
 
 %files
+%{!?_licensedir:%global license %doc}
 %doc AUTHORS ChangeLog
 %license COPYING
 %{_libdir}/libtorrent-rasterbar.so.8*
@@ -173,13 +199,26 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{_bindir}/rss_reader
 %{_bindir}/upnp_test
 
-%files	python
+%files	python2
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
-%{python_sitearch}/python_libtorrent-%{version}-py?.?.egg-info
-%{python_sitearch}/libtorrent.so
+%{python2_sitearch}/python_libtorrent-%{version}-py2.?.egg-info
+%{python2_sitearch}/libtorrent.so
+
+%if 0%{?with_python3}
+%files	python3
+%doc AUTHORS ChangeLog
+%license COPYING.Boost
+%{python3_sitearch}/python_libtorrent-%{version}-py3.?.egg-info
+%endif # with_python3
 
 %changelog
+* Sat Mar 12 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.9-1
+- Rebuilt for libtommath upgrade to 1.x
+- Upgrade to 1.0.9
+- Provide -python3 subpackage as well
+- Rename -python subpackage as -python2
+
 * Tue Jan 26 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.8-1
 - Upstream release 1.0.7
 
