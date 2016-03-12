@@ -35,8 +35,10 @@ BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
+BuildRequires:  python2-devel
 BuildRequires:	python2-setuptools
 %if 0%{?with_python3}
+BuildRequires:  python3-devel
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	python3-setuptools
 %endif # with_python3
