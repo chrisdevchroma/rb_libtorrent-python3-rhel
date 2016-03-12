@@ -36,7 +36,11 @@ BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
 BuildRequires:  python2-devel
+%if 0%{?fedora} > 22
 BuildRequires:	python2-setuptools
+%else
+BuildRequires:	python-setuptools
+%endif
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:	pkgconfig(python3)
