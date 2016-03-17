@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.0.9
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -44,6 +44,7 @@ BuildRequires:	python-setuptools
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:	pkgconfig(python3)
+BuildRequires:	boost-python3-devel
 BuildRequires:	python3-setuptools
 %endif # with_python3
 BuildRequires:	libtool
@@ -143,6 +144,13 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 %endif
 
 %build
+%define _configure ../configure
+
+mkdir -p build/bindings build-python3/bindings
+echo build/bindings build-python3/bindings | xargs -n 1 cp -r bindings/python
+
+# Build the lib with Python 2 bindings
+pushd build
 %configure \
 	--disable-static \
 	--enable-examples \
@@ -154,24 +162,61 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 	--enable-export-all
 
 make V=1 %{?_smp_mflags}
+popd
+
+%if 0%{?with_python3}
+# This is ugly but can't think of an easier way to build the binding
+export CPPFLAGS="$CPPFLAGS $(python%{python3_version}-config --includes)"
+export LDFLAGS="$LDFLAGS -L%{_builddir}/libtorrent-rasterbar-%{version}/build/src/.libs"
+export PYTHON=/usr/bin/python%{python3_version}
+export PYTHON_LDFLAGS="$PYTHON_LDFLAGS $(python%{python3_version}-config --libs)"
+
+pushd build-python3
+%configure \
+	--disable-static \
+	--enable-examples \
+	--enable-python-binding \
+	--with-boost-system=boost_system \
+	--with-boost-python=boost_python%{python3_version} \
+	--with-libgeoip=system \
+	--with-libiconv \
+	--enable-export-all
+
+pushd bindings/python
+make V=1 %{?_smp_mflags}
+%endif # with_python3
 
 %check
+pushd build
 make check
+popd
+
+%if 0%{?with_python3}
+pushd build-python3
+make check
+popd
+%endif # with_python3
 
 %install
 ## Ensure that we preserve our timestamps properly.
 export CPPROG="%{__cp} -p"
+
+pushd build
 %{make_install}
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
 rename client torrent_client %{buildroot}%{_bindir}/*
-install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 ## Install the python binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
+popd && popd
+
 %if 0%{?with_python3}
+pushd build-python3/bindings/python
 %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+popd
 %endif # with_python3
-popd 
+
+install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 
 ## unpackged files
 # .la files
@@ -216,9 +261,13 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
 %{python3_sitearch}/python_libtorrent-%{version}-py3.?.egg-info
+%{python3_sitearch}/libtorrent.cpython-*.so
 %endif # with_python3
 
 %changelog
+* Mon Mar 14 2016 Przemysław Palacz <pprzemal@gmail.com> - 1.0.9-2
+- Fix missing Python 3 binding library
+
 * Sat Mar 12 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.9-1
 - Upgrade to 1.0.9
 - Provide -python3 subpackage as well
