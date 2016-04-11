@@ -15,14 +15,14 @@
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.0.9
-Release:	2%{?dist}
+Version:	1.1.0
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
-URL:		http://www.rasterbar.com/products/libtorrent/
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_9/libtorrent-rasterbar-%{version}.tar.gz
+URL:		http://www.rasterbar.com/products/libtorrent
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -265,6 +265,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with_python3
 
 %changelog
+* Mon Apr 11 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.1.0-1
+- Upgrade to 1.1.0
+
 * Mon Mar 14 2016 Przemysław Palacz <pprzemal@gmail.com> - 1.0.9-2
 - Fix missing Python 3 binding library
 
