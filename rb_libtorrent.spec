@@ -185,12 +185,16 @@ make V=1 %{?_smp_mflags}
 
 %check
 pushd build
-make check
+cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
+cp ../test/*.{cpp,hpp,py} ./test/
+make %{?_smp_mflags} check
 popd
 
 %if 0%{?with_python3}
 pushd build-python3
-make check
+cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
+cp ../test/*.{cpp,hpp,py} ./test/
+make %{?_smp_mflags} check
 popd
 %endif # with_python3
 
@@ -243,8 +247,6 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %license COPYING
 %{_bindir}/*torrent*
 %{_bindir}/connection_tester
-%{_bindir}/parse_*
-%{_bindir}/rss_reader
 %{_bindir}/upnp_test
 
 %files	python2
