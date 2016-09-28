@@ -1,0 +1,120 @@
+diff -uNrp a/include/libtorrent/Makefile.am b/include/libtorrent/Makefile.am
+--- a/include/libtorrent/Makefile.am	2016-08-23 05:28:09.000000000 +0100
++++ b/include/libtorrent/Makefile.am	2016-09-28 09:27:40.915763994 +0100
+@@ -153,11 +153,6 @@ nobase_include_HEADERS = \
+   web_peer_connection.hpp      \
+   xml_parse.hpp                \
+   \
+-  tommath.h                         \
+-  tommath_class.h                   \
+-  tommath_superclass.h              \
+-  tommath_private.h                 \
+-  \
+   aux_/alert_manager_variadic_emplace.hpp \
+   aux_/allocating_handler.hpp       \
+   aux_/cpuid.hpp                    \
+diff -uNrp a/include/libtorrent/Makefile.in b/include/libtorrent/Makefile.in
+--- a/include/libtorrent/Makefile.in	2016-08-23 07:14:04.000000000 +0100
++++ b/include/libtorrent/Makefile.in	2016-09-28 09:36:25.481763366 +0100
+@@ -492,11 +492,6 @@ nobase_include_HEADERS = \
+   web_peer_connection.hpp      \
+   xml_parse.hpp                \
+   \
+-  tommath.h                         \
+-  tommath_class.h                   \
+-  tommath_superclass.h              \
+-  tommath_private.h                 \
+-  \
+   aux_/alert_manager_variadic_emplace.hpp \
+   aux_/allocating_handler.hpp       \
+   aux_/cpuid.hpp                    \
+diff -uNrp a/src/Makefile.am b/src/Makefile.am
+--- a/src/Makefile.am	2016-08-23 05:28:09.000000000 +0100
++++ b/src/Makefile.am	2016-09-28 09:37:50.409850158 +0100
+@@ -86,7 +86,6 @@ libtorrent_rasterbar_la_SOURCES = \
+   magnet_uri.cpp                  \
+   merkle.cpp                      \
+   metadata_transfer.cpp           \
+-  mpi.cpp                         \
+   natpmp.cpp                      \
+   parse_url.cpp                   \
+   part_file.cpp                   \
+@@ -151,7 +150,7 @@ libtorrent_rasterbar_la_SOURCES = \
+   $(KADEMLIA_SOURCES)
+ 
+ libtorrent_rasterbar_la_LDFLAGS = -version-info $(INTERFACE_VERSION_INFO)
+-libtorrent_rasterbar_la_LIBADD = @BOOST_SYSTEM_LIB@ @OPENSSL_LIBS@
++libtorrent_rasterbar_la_LIBADD = @BOOST_SYSTEM_LIB@ @OPENSSL_LIBS@ -ltommath
+ 
+ AM_CPPFLAGS = -DTORRENT_BUILDING_LIBRARY -I$(top_srcdir)/include -I$(top_srcdir)/ed25519/src @DEBUGFLAGS@ @OPENSSL_INCLUDES@
+ AM_CFLAGS = -I$(top_srcdir)/ed25519/src -std=c99
+diff -uNrp a/src/Makefile.in b/src/Makefile.in
+--- a/src/Makefile.in	2016-08-23 07:14:04.000000000 +0100
++++ b/src/Makefile.in	2016-09-28 09:40:14.174918721 +0100
+@@ -155,7 +155,7 @@ am__libtorrent_rasterbar_la_SOURCES_DIST
+ 	http_stream.cpp http_tracker_connection.cpp i2p_stream.cpp \
+ 	identify_client.cpp instantiate_connection.cpp ip_filter.cpp \
+ 	ip_voter.cpp lazy_bdecode.cpp lsd.cpp lt_trackers.cpp \
+-	magnet_uri.cpp merkle.cpp metadata_transfer.cpp mpi.cpp \
++	magnet_uri.cpp merkle.cpp metadata_transfer.cpp \
+ 	natpmp.cpp parse_url.cpp part_file.cpp pe_crypto.cpp \
+ 	performance_counters.cpp peer_connection.cpp \
+ 	peer_connection_handle.cpp peer_class.cpp peer_class_set.cpp \
+@@ -220,7 +220,7 @@ am_libtorrent_rasterbar_la_OBJECTS = web
+ 	http_stream.lo http_tracker_connection.lo i2p_stream.lo \
+ 	identify_client.lo instantiate_connection.lo ip_filter.lo \
+ 	ip_voter.lo lazy_bdecode.lo lsd.lo lt_trackers.lo \
+-	magnet_uri.lo merkle.lo metadata_transfer.lo mpi.lo natpmp.lo \
++	magnet_uri.lo merkle.lo metadata_transfer.lo natpmp.lo \
+ 	parse_url.lo part_file.lo pe_crypto.lo performance_counters.lo \
+ 	peer_connection.lo peer_connection_handle.lo peer_class.lo \
+ 	peer_class_set.lo piece_picker.lo platform_util.lo \
+@@ -554,7 +554,6 @@ libtorrent_rasterbar_la_SOURCES = \
+   magnet_uri.cpp                  \
+   merkle.cpp                      \
+   metadata_transfer.cpp           \
+-  mpi.cpp                         \
+   natpmp.cpp                      \
+   parse_url.cpp                   \
+   part_file.cpp                   \
+@@ -619,7 +618,7 @@ libtorrent_rasterbar_la_SOURCES = \
+   $(KADEMLIA_SOURCES)
+ 
+ libtorrent_rasterbar_la_LDFLAGS = -version-info $(INTERFACE_VERSION_INFO)
+-libtorrent_rasterbar_la_LIBADD = @BOOST_SYSTEM_LIB@ @OPENSSL_LIBS@
++libtorrent_rasterbar_la_LIBADD = @BOOST_SYSTEM_LIB@ @OPENSSL_LIBS@ -ltommath
+ AM_CPPFLAGS = -DTORRENT_BUILDING_LIBRARY -I$(top_srcdir)/include -I$(top_srcdir)/ed25519/src @DEBUGFLAGS@ @OPENSSL_INCLUDES@
+ AM_CFLAGS = -I$(top_srcdir)/ed25519/src -std=c99
+ AM_LDFLAGS = @OPENSSL_LDFLAGS@
+@@ -832,7 +831,6 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/magnet_uri.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/merkle.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/metadata_transfer.Plo@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mpi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/natpmp.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/packet_buffer.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse_url.Plo@am__quote@
+diff -uNrp a/src/pe_crypto.cpp b/src/pe_crypto.cpp
+--- a/src/pe_crypto.cpp	2016-08-23 05:28:09.000000000 +0100
++++ b/src/pe_crypto.cpp	2016-09-28 09:40:59.178375010 +0100
+@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ #include <algorithm>
+ 
+ extern "C" {
+-#include "libtorrent/tommath.h"
++#include <tommath.h>
+ }
+ 
+ #include "libtorrent/aux_/disable_warnings_pop.hpp"
+diff -uNrp a/test/test_pe_crypto.cpp b/test/test_pe_crypto.cpp
+--- a/test/test_pe_crypto.cpp	2016-08-23 05:28:10.000000000 +0100
++++ b/test/test_pe_crypto.cpp	2016-09-28 10:07:01.211776200 +0100
+@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ #include "test.hpp"
+ 
+ extern "C" {
+-#include "libtorrent/tommath.h"
++#include <tommath.h>
+ }
+ 
+ #if !defined(TORRENT_DISABLE_ENCRYPTION) && !defined(TORRENT_DISABLE_EXTENSIONS)

@@ -15,24 +15,23 @@
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.1.0
-Release:	2%{?dist}
+Version:	1.1.1
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_1/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
-Patch1:		%{name}-1.0.6-system-tommath.patch
+Patch1:		%{name}-1.1.1-system-tommath.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
 BuildRequires:	libtommath-devel
-BuildRequires:	pkgconfig(geoip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
 BuildRequires:  python2-devel
@@ -98,9 +97,9 @@ included documentation for more details.)
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
-Requires:	%{name}%{?_isa} = %{version}-%{release}
-Provides:   %{name}-python
-Obsoletes:  %{name}-python < 1.0.9
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Provides:       %{name}-python
+Obsoletes:      %{name}-python < 1.0.9
 
 %description	python2
 The %{name}-python2 package contains Python language bindings
@@ -122,9 +121,9 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch0 -p1
+#patch0 -p1
 %patch1 -p1
-rm include/libtorrent/tommath* src/mpi.c
+rm include/libtorrent/tommath* src/mpi.cpp
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -157,7 +156,6 @@ pushd build
 	--enable-python-binding \
 	--with-boost-system=boost_system \
 	--with-boost-python=boost_python \
-	--with-libgeoip=system \
 	--with-libiconv \
 	--enable-export-all
 
@@ -178,7 +176,6 @@ pushd build-python3
 	--enable-python-binding \
 	--with-boost-system=boost_system \
 	--with-boost-python=boost_python%{python3_version} \
-	--with-libgeoip=system \
 	--with-libiconv \
 	--enable-export-all
 
@@ -232,7 +229,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{!?_licensedir:%global license %doc}
 %doc AUTHORS ChangeLog
 %license COPYING
-%{_libdir}/libtorrent-rasterbar.so.8*
+%{_libdir}/libtorrent-rasterbar.so.9*
 
 %files	devel
 %doc docs/
@@ -265,6 +262,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with_python3
 
 %changelog
+* Wed Sep 28 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-1
+- Upgrade to 1.1.1
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-2
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
