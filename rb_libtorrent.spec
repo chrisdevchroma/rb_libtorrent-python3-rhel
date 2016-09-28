@@ -124,6 +124,7 @@ Python applications.
 #patch0 -p1
 %patch1 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
+sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -246,7 +247,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %doc README-renames.Fedora
 %license COPYING
 %{_bindir}/*torrent*
+%{_bindir}/bt_ge*
 %{_bindir}/connection_tester
+%{_bindir}/stats_counters
 %{_bindir}/upnp_test
 
 %files	python2
