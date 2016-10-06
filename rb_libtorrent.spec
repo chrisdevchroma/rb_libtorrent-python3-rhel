@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -47,7 +47,8 @@ BuildRequires:	boost-python3-devel
 BuildRequires:	python3-setuptools
 %endif # with_python3
 BuildRequires:	libtool
-BuildRequires:	util-linux
+BuildRequires:  util-linux
+BuildRequires:  chrpath
 
 ## The following is taken from it's website listing...mostly.
 %description
@@ -207,6 +208,17 @@ pushd build
 %{make_install}
 ## Do the renaming due to the somewhat limited %%_bindir namespace. 
 rename client torrent_client %{buildroot}%{_bindir}/*
+## Fix rpath
+chrpath -d %{buildroot}%{_bindir}/bt_get
+chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
+chrpath -d %{buildroot}%{_bindir}/dump_torrent
+chrpath -d %{buildroot}%{_bindir}/upnp_test
+chrpath -d %{buildroot}%{_bindir}/make_torrent
+chrpath -d %{buildroot}%{_bindir}/fuzz_torrent
+chrpath -d %{buildroot}%{_bindir}/stats_counters
+chrpath -d %{buildroot}%{_bindir}/torrent_client_test
+chrpath -d %{buildroot}%{_bindir}/connection_tester
+chrpath -d %{buildroot}%{_bindir}/bt_get2
 ## Install the python binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
@@ -267,6 +279,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with_python3
 
 %changelog
+* Thu Oct 06 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-2
+- Fix rpath
+
 * Wed Sep 28 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-1
 - Upgrade to 1.1.1
 
