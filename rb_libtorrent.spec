@@ -1,12 +1,7 @@
 %if 0%{?rhel}
-%global with_python3 0
-%{!?__python2: %global __python2 /usr/bin/python2}
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
-%{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
+%bcond_with python3
 %else
-%global with_python3 1
+%bcond_without python3
 %endif
 
 # we don't want to provide private python extension libs
@@ -34,18 +29,6 @@ BuildRequires:	boost-devel
 BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
-BuildRequires:  python2-devel
-%if 0%{?fedora} > 22
-BuildRequires:	python2-setuptools
-%else
-BuildRequires:	python-setuptools
-%endif
-%if 0%{?with_python3}
-BuildRequires:  python3-devel
-BuildRequires:	pkgconfig(python3)
-BuildRequires:	boost-python3-devel
-BuildRequires:	python3-setuptools
-%endif # with_python3
 BuildRequires:	libtool
 BuildRequires:  util-linux
 BuildRequires:  chrpath
@@ -98,6 +81,12 @@ included documentation for more details.)
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
+BuildRequires:  python2-devel
+%if 0%{?fedora} > 22
+BuildRequires:	python2-setuptools
+%else
+BuildRequires:	python-setuptools
+%endif
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Provides:       %{name}-python
 Obsoletes:      %{name}-python < 1.0.9
@@ -107,18 +96,22 @@ The %{name}-python2 package contains Python language bindings
 (the 'libtorrent' module) that allow it to be used from within
 Python applications.
 
-%if 0%{?with_python3}
+%if %{with python3}
 %package	python3
 Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
+BuildRequires:  python3-devel
+BuildRequires:	pkgconfig(python3)
+BuildRequires:	boost-python3-devel
+BuildRequires:	python3-setuptools
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	python3
 The %{name}-python3 package contains Python language bindings
 (the 'libtorrent' module) that allow it to be used from within
 Python applications.
-%endif # with_python3
+%endif # with python3
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
@@ -192,13 +185,13 @@ cp ../test/*.{cpp,hpp,py} ./test/
 make %{?_smp_mflags} check
 popd
 
-%if 0%{?with_python3}
+%if %{with python3}
 pushd build-python3
 cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
 cp ../test/*.{cpp,hpp,py} ./test/
 make %{?_smp_mflags} check
 popd
-%endif # with_python3
+%endif # with python3
 
 %install
 ## Ensure that we preserve our timestamps properly.
@@ -224,11 +217,11 @@ pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 popd && popd
 
-%if 0%{?with_python3}
+%if %{with python3}
 pushd build-python3/bindings/python
 %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
 popd
-%endif # with_python3
+%endif # with python3
 
 install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 
@@ -270,13 +263,13 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %{python2_sitearch}/python_libtorrent-%{version}-py2.?.egg-info
 %{python2_sitearch}/libtorrent.so
 
-%if 0%{?with_python3}
+%if %{with python3}
 %files	python3
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
 %{python3_sitearch}/python_libtorrent-%{version}-py3.?.egg-info
 %{python3_sitearch}/libtorrent.cpython-*.so
-%endif # with_python3
+%endif # with python3
 
 %changelog
 * Thu Oct 06 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-2
@@ -288,13 +281,13 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-2
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
-* Mon Apr 11 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.1.0-1
+* Mon Apr 11 2016 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.1.0-1
 - Upgrade to 1.1.0
 
 * Mon Mar 14 2016 Przemysław Palacz <pprzemal@gmail.com> - 1.0.9-2
 - Fix missing Python 3 binding library
 
-* Sat Mar 12 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.9-1
+* Sat Mar 12 2016 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.0.9-1
 - Upgrade to 1.0.9
 - Provide -python3 subpackage as well
 - Rename -python subpackage as -python2
@@ -305,17 +298,17 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.8-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
-* Tue Jan 26 2016 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.8-1
+* Tue Jan 26 2016 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.0.8-1
 - Upstream release 1.0.8
 
 * Fri Jan 15 2016 Jonathan Wakely <jwakely@redhat.com> - 1.0.7-3
 - Rebuilt for Boost 1.60
 
-* Mon Dec 07 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-2
+* Mon Dec 07 2015 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.0.7-2
 - Fixes to make it work properly with python2 on F24+
 - Remove README since is not shipped any more
 
-* Sat Nov 14 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.7-1
+* Sat Nov 14 2015 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.0.7-1
 - Upstream release 1.0.7
 
 * Sat Oct 17 2015 Ville Skyttä <ville.skytta@iki.fi> - 1.0.6-3
@@ -336,7 +329,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 * Wed Jul 29 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Changes/F23Boost159
 
-* Sun Jul 26 2015 Fabio Alessandro Locati <fabio@locati.cc> - 1.0.5-1
+* Sun Jul 26 2015 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.0.5-1
 - Upstream release 1.0.5
 - Lint the spec file
 
