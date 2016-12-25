@@ -11,7 +11,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -272,6 +272,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Thu Dec 22 2016 Miro Hrončok <mhroncok@redhat.com> - 1.1.1-3
+- Rebuild for Python 3.6
+
 * Thu Oct 06 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-2
 - Fix rpath
 
