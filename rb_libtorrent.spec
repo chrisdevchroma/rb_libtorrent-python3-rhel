@@ -11,7 +11,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -272,6 +272,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Thu Dec 22 2016 Miro Hrončok <mhroncok@redhat.com> - 1.1.1-3
 - Rebuild for Python 3.6
 
