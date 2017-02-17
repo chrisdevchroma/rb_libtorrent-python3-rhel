@@ -23,6 +23,8 @@ Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.1-system-tommath.patch
+# https://github.com/chriskohlhoff/asio/issues/184
+Patch2:		%{name}-1.1.1-asio-ssl-headers.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -117,6 +119,7 @@ Python applications.
 %setup -q -n "libtorrent-rasterbar-%{version}"
 #patch0 -p1
 %patch1 -p1
+%patch2 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -272,6 +275,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Fri Feb 17 2017 Jonathan Wakely <jwakely@redhat.com> - 1.1.1-4
+- Fix failure test due to asio header order issue
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

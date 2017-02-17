@@ -1,0 +1,10 @@
+--- libtorrent-rasterbar-1.1.1/test/test_ssl.cpp.orig	2017-02-17 23:41:30.468209069 +0000
++++ libtorrent-rasterbar-1.1.1/test/test_ssl.cpp	2017-02-17 23:41:33.212212223 +0000
+@@ -51,7 +51,6 @@
+ #include <boost/asio/connect.hpp>
+ 
+ #ifdef TORRENT_USE_OPENSSL
+-#include <boost/asio/ssl/error.hpp> // for asio::error::get_ssl_category()
+ #include <boost/asio/ssl.hpp>
+ 
+ #include "libtorrent/aux_/disable_warnings_pop.hpp"
