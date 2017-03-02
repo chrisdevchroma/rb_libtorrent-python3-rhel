@@ -10,19 +10,19 @@
 %filter_setup
 
 Name:		rb_libtorrent
-Version:	1.1.1
-Release:	3%{?dist}
+Version:	1.1.2
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_1/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_2/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
-Patch1:		%{name}-1.1.1-system-tommath.patch
+Patch1:		%{name}-1.1.2-system-tommath.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -33,7 +33,6 @@ BuildRequires:	libtool
 BuildRequires:  util-linux
 BuildRequires:  chrpath
 
-## The following is taken from it's website listing...mostly.
 %description
 %{name} is a C++ library that aims to be a good alternative to all
 the other BitTorrent implementations around. It is a library and not a full
@@ -272,6 +271,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Tue Feb 28 2017 Fabio Alessandro Locati <fale@fedoraproject.org> - 1.1.2-1
+- Upgrade to 1.1.1
+
 * Thu Dec 22 2016 Miro Hrončok <mhroncok@redhat.com> - 1.1.1-3
 - Rebuild for Python 3.6
 
