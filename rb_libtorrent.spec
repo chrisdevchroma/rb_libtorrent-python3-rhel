@@ -1,17 +1,22 @@
-%if 0%{?rhel}
-%bcond_with python3
-%else
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %bcond_without python3
+%else
+%bcond_with python3
 %endif
 
 # we don't want to provide private python extension libs
-%filter_provides_in %{python_sitearch}/.*\.so$ 
+%if 0%{?fedora} || 0%{?rhel} >= 7
+%global __provides_exclude_from ^(%{python2_sitearch}|%{python3_sitearch})/.*\.so$
+%else
+%filter_provides_in %{python_sitearch}/.*\.so$
 # actually set up the filtering
 %filter_setup
+%endif
+
 
 Name:		rb_libtorrent
 Version:	1.1.2
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -41,7 +46,7 @@ the other BitTorrent implementations around. It is a library and not a full
 featured client, although it comes with a few working example clients.
 
 Its main goals are to be very efficient (in terms of CPU and memory usage) as
-well as being very easy to use both as a user and developer. 
+well as being very easy to use both as a user and developer.
 
 %package 	devel
 Summary:	Development files for %{name}
@@ -172,7 +177,7 @@ pushd build-python3
 	--enable-examples \
 	--enable-python-binding \
 	--with-boost-system=boost_system \
-	--with-boost-python=boost_python%{python3_version} \
+	--with-boost-python=boost_python3 \
 	--with-libiconv \
 	--enable-export-all
 
@@ -201,7 +206,7 @@ export CPPROG="%{__cp} -p"
 
 pushd build
 %{make_install}
-## Do the renaming due to the somewhat limited %%_bindir namespace. 
+## Do the renaming due to the somewhat limited %%_bindir namespace.
 rename client torrent_client %{buildroot}%{_bindir}/*
 ## Fix rpath
 chrpath -d %{buildroot}%{_bindir}/bt_get
@@ -274,6 +279,11 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.1.2-3
+- Fix linking for the Python3 bindings (rhbz#1399390)
+- Fix filtering provides
+- Clean trailing whitespace
+
 * Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
 
@@ -513,7 +523,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 * Fri May 28 2010 Rahul Sundaram <sundaram@fedoraproject.org> - 0.14.10-2
 - Fix E-V-R issue that breaks qbittorrent and deluge for upgrades
-- Add default attributes to examples 
+- Add default attributes to examples
 
 * Sun Apr 04 2010 Leigh Scott <leigh123linux@googlemail.com> - 0.14.10-1
 - Update to new upstream release (0.14.10)
@@ -536,7 +546,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 * Sun Sep 27 2009 Peter Gordon <peter@thecodergeek.com> - 0.14.6-1
 - Update to new upstream release (0.14.6)
 - Build against system GeoIP libraries.
-	
+
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 0.14.4-3
 - rebuilt with new openssl
 
@@ -598,7 +608,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 - fix license tag
 
 * Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-2
-- Add python bindings in a -python subpackage. 
+- Add python bindings in a -python subpackage.
 
 * Mon Jul 14 2008 Peter Gordon <peter@thecodergeek.com> - 0.13.1-1
 - Update to new upstream release (0.13.1): Contains an incompatible ABI/API
@@ -606,7 +616,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 - Drop GCC 4.3 patch (fixed upstream):
   - gcc43.patch
 - Disable building the examples for now. (Attempted builds fail due to missing
-  Makefile support.) 
+  Makefile support.)
 - Drop the source permissions and pkgconfig file tweaks (fixed upstream).
 
 * Sat Feb 09 2008 Peter Gordon <peter@thecodergeek.com> - 0.12.1-1
@@ -630,7 +640,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 - Update to new upstream release (0.12 Final)
 - Split examples into a subpackage. Applications that use rb_libtorrent
   don't need the example binaries installed; and splitting the package in this
-  manner is a bit more friendly to multilib environments.  
+  manner is a bit more friendly to multilib environments.
 
 * Sun Mar 11 2007 Peter Gordon <peter@thecodergeek.com> - 0.12-0.rc1
 - Update to new upstream release (0.12 RC).
@@ -650,7 +660,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
   fix some spacing issues in it.
 - Strip the @ZLIB@ (and thus, the extra '-lz' link option) from the installed
   pkgconfig file, as that is only useful when building a statically-linked
-  libtorrent binary. 
+  libtorrent binary.
 - Fix conflict: The -devel subpackage should conflict with the -devel
   subpackage of libtorrent, not the main package.
 - Preserve timestamps in %%install.
@@ -664,7 +674,7 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 
 * Fri Jan 05 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-2
 - Add Requires: pkgconfig to the -devel subpackage since it installs a .pc
-  file. 
+  file.
 
 * Wed Jan 03 2007 Peter Gordon <peter@thecodergeek.com> - 0.11-1
-- Initial packaging for Fedora Extras 
+- Initial packaging for Fedora Extras
