@@ -15,21 +15,19 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.2
-Release:	7%{?dist}
+Version:	1.1.5
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		http://www.rasterbar.com/products/libtorrent
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_2/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_5/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.2-system-tommath.patch
-# https://github.com/chriskohlhoff/asio/issues/184
-Patch2:		%{name}-1.1.1-asio-ssl-headers.patch
 
 BuildRequires:	asio-devel
 BuildRequires:	boost-devel
@@ -123,7 +121,6 @@ Python applications.
 %setup -q -n "libtorrent-rasterbar-%{version}"
 #patch0 -p1
 %patch1 -p1
-%patch2 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -210,15 +207,14 @@ pushd build
 rename client torrent_client %{buildroot}%{_bindir}/*
 ## Fix rpath
 chrpath -d %{buildroot}%{_bindir}/bt_get
-chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
+chrpath -d %{buildroot}%{_bindir}/bt_get2
+chrpath -d %{buildroot}%{_bindir}/connection_tester
 chrpath -d %{buildroot}%{_bindir}/dump_torrent
-chrpath -d %{buildroot}%{_bindir}/upnp_test
 chrpath -d %{buildroot}%{_bindir}/make_torrent
-chrpath -d %{buildroot}%{_bindir}/fuzz_torrent
+chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
 chrpath -d %{buildroot}%{_bindir}/stats_counters
 chrpath -d %{buildroot}%{_bindir}/torrent_client_test
-chrpath -d %{buildroot}%{_bindir}/connection_tester
-chrpath -d %{buildroot}%{_bindir}/bt_get2
+chrpath -d %{buildroot}%{_bindir}/upnp_test
 ## Install the python binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
@@ -279,6 +275,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Sat Nov 04 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.5-1
+- Upgrade to 1.1.5
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.2-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
