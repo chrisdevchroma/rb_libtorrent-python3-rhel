@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.5
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -30,6 +30,7 @@ Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.2-system-tommath.patch
 
 BuildRequires:	asio-devel
+BuildRequires:	automake
 BuildRequires:	boost-devel
 BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
@@ -123,6 +124,10 @@ Python applications.
 %patch1 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
+
+%if 0%{?rhel}
+autoreconf -fiv
+%endif
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
@@ -275,6 +280,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Sat Nov 25 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.5-2
+- Fix build for epel7
+
 * Sat Nov 04 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.5-1
 - Upgrade to 1.1.5
 
