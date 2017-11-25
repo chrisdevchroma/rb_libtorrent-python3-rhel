@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.5
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -28,6 +28,11 @@ Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.2-system-tommath.patch
+
+%if 0%{?rhel}
+# aarch64 is broken and I have zero interest in fixing it
+ExcludeArch:    aarch64
+%endif
 
 BuildRequires:	asio-devel
 BuildRequires:	automake
@@ -280,6 +285,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Sat Nov 25 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.5-3
+- Exclude aarch64 for epel7
+
 * Sat Nov 25 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.5-2
 - Fix build for epel7
 
