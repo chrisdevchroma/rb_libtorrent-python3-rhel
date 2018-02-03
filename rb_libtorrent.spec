@@ -193,20 +193,22 @@ pushd bindings/python
 make V=1 %{?_smp_mflags}
 %endif # with_python3
 
+%if 0%{?fedora} < 28
 %check
-#pushd build
-#cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
-#cp ../test/*.{cpp,hpp,py} ./test/
-#make %{?_smp_mflags} check
-#popd
+pushd build
+cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
+cp ../test/*.{cpp,hpp,py} ./test/
+make %{?_smp_mflags} check
+popd
 
-#%if %{with python3}
-#pushd build-python3
-#cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
-#cp ../test/*.{cpp,hpp,py} ./test/
-#make %{?_smp_mflags} check
-#popd
-#%endif # with python3
+%if %{with python3}
+pushd build-python3
+cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
+cp ../test/*.{cpp,hpp,py} ./test/
+make %{?_smp_mflags} check
+popd
+%endif # with python3
+%endif
 
 %install
 ## Ensure that we preserve our timestamps properly.
