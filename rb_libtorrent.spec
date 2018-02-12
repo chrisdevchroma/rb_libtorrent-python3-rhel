@@ -21,7 +21,7 @@ Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
-URL:		http://www.rasterbar.com/products/libtorrent
+URL:		https://www.libtorrent.org
 Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_6/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
