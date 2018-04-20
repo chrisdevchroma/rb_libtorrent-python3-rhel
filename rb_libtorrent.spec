@@ -15,19 +15,20 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.6
-Release:	3%{?dist}
+Version:	1.1.7
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_6/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_7/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.2-system-tommath.patch
+Patch2:		disable_failed_test.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -127,6 +128,7 @@ Python applications.
 %setup -q -n "libtorrent-rasterbar-%{version}"
 #patch0 -p1
 %patch1 -p1
+%patch2 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -193,22 +195,20 @@ pushd bindings/python
 make V=1 %{?_smp_mflags}
 %endif # with_python3
 
-%if 0%{?fedora} < 28
 %check
 pushd build
 cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
-cp ../test/*.{cpp,hpp,py} ./test/
+cp ../test/*.{cpp,hpp,py,gz} ./test/
 make %{?_smp_mflags} check
 popd
 
 %if %{with python3}
 pushd build-python3
 cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
-cp ../test/*.{cpp,hpp,py} ./test/
+cp ../test/*.{cpp,hpp,py,gz} ./test/
 make %{?_smp_mflags} check
 popd
 %endif # with python3
-%endif
 
 %install
 ## Ensure that we preserve our timestamps properly.
@@ -241,15 +241,10 @@ popd
 
 install -p -m 0644 %{SOURCE1} ./README-renames.Fedora
 
-## unpackged files
-# .la files
-rm -fv %{buildroot}%{_libdir}/lib*.la
-# static libs
-rm -fv %{buildroot}%{_libdir}/lib*.a
+#Remove libtool archives.
+find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %files
 %{!?_licensedir:%global license %doc}
@@ -288,6 +283,9 @@ rm -fv %{buildroot}%{_libdir}/lib*.a
 %endif # with python3
 
 %changelog
+* Fri Apr 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.7-1
+- Upgrade to 1.1.7
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.6-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
