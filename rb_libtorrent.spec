@@ -132,9 +132,7 @@ Python applications.
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
-%if 0%{?rhel}
 autoreconf -fiv
-%endif
 
 ## The RST files are the sources used to create the final HTML files; and are
 ## not needed.
