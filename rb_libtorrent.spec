@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.7
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -93,6 +93,9 @@ Summary:	Python bindings for %{name}
 Group:		Development/Languages
 License:	Boost
 BuildRequires:  python2-devel
+%if 0%{?fedora} > 28
+BuildRequires:	boost-python2-devel
+%endif
 %if 0%{?fedora} > 22
 BuildRequires:	python2-setuptools
 %else
@@ -281,6 +284,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Tue May 01 2018 Jonathan Wakely <jwakely@redhat.com> - 1.1.7-2
+- Use BuildRequires: boost-python2-devel to fix build with boost-1.66.0-7.fc29
+
 * Fri Apr 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.7-1
 - Upgrade to 1.1.7
 
