@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.7
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -29,6 +29,7 @@ Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
 Patch1:		%{name}-1.1.2-system-tommath.patch
 Patch2:		disable_failed_test.patch
+Patch3:		%{name}-1.1.7-rate-limit.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -132,6 +133,7 @@ Python applications.
 #patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -284,6 +286,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Mon Jun 11 2018 Michael Cronenworth <mike@cchtml.com> - 1.1.7-3
+- Add patch to fix rate limiting (rhbz#1544257)
+
 * Tue May 01 2018 Jonathan Wakely <jwakely@redhat.com> - 1.1.7-2
 - Use BuildRequires: boost-python2-devel to fix build with boost-1.66.0-7.fc29
 
