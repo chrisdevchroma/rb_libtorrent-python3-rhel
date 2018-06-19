@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.7
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -286,6 +286,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 1.1.7-4
+- Rebuilt for Python 3.7
+
 * Mon Jun 11 2018 Michael Cronenworth <mike@cchtml.com> - 1.1.7-3
 - Add patch to fix rate limiting (rhbz#1544257)
 
