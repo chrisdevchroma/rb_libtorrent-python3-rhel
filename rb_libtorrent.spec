@@ -15,19 +15,19 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.7
-Release:	4%{?dist}
+Version:	1.1.8
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_7/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_8/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
-Patch1:		%{name}-1.1.2-system-tommath.patch
+Patch1:		%{name}-1.1.8-system-tommath.patch
 Patch2:		disable_failed_test.patch
 Patch3:		%{name}-1.1.7-rate-limit.patch
 
@@ -286,6 +286,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Mon Jul 02 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.8-1
+- Upgrade to 1.1.8
+
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 1.1.7-4
 - Rebuilt for Python 3.7
 
