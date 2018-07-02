@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.8
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -286,6 +286,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Mon Jul 02 2018 Miro Hrončok <mhroncok@redhat.com> - 1.1.8-2
+- Rebuilt for Python 3.7
+
 * Mon Jul 02 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.8-1
 - Upgrade to 1.1.8
 
