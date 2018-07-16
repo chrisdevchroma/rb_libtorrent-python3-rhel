@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.8
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
@@ -39,6 +39,7 @@ ExcludeArch:    aarch64
 BuildRequires:	asio-devel
 BuildRequires:	automake
 BuildRequires:	boost-devel
+BuildRequires:	gcc-c++
 BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(python2)
@@ -286,6 +287,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Mon Jul 16 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.8-4
+- Add  BuildRequires gcc-c++
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.8-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
