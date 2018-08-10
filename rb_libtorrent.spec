@@ -15,21 +15,20 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.8
-Release:	4%{?dist}
+Version:	1.1.9
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 Group:		System Environment/Libraries
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_8/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_9/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
 Patch0:		%{name}-1.0.1-boost_noncopyable.patch
-Patch1:		%{name}-1.1.8-system-tommath.patch
+Patch1:		%{name}-1.1.9-system-tommath.patch
 Patch2:		disable_failed_test.patch
-Patch3:		%{name}-1.1.7-rate-limit.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -98,11 +97,7 @@ BuildRequires:  python2-devel
 %if 0%{?fedora} > 28
 BuildRequires:	boost-python2-devel
 %endif
-%if 0%{?fedora} > 22
 BuildRequires:	python2-setuptools
-%else
-BuildRequires:	python-setuptools
-%endif
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Provides:       %{name}-python
 Obsoletes:      %{name}-python < 1.0.9
@@ -134,7 +129,6 @@ Python applications.
 #patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -287,6 +281,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Thu Aug 09 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.9-1
+- Upgrade to 1.1.9
+
 * Mon Jul 16 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.8-4
 - Add  BuildRequires gcc-c++
 - Disable checking tests
