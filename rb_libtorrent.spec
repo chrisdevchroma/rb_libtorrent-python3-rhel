@@ -19,7 +19,6 @@ Version:	1.1.9
 Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
-Group:		System Environment/Libraries
 License:	BSD
 URL:		https://www.libtorrent.org
 Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_9/libtorrent-rasterbar-%{version}.tar.gz
@@ -56,7 +55,6 @@ well as being very easy to use both as a user and developer.
 
 %package 	devel
 Summary:	Development files for %{name}
-Group:		Development/Libraries
 License:	BSD and zlib and Boost
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 ## FIXME: Same include directory. :(
@@ -79,7 +77,6 @@ a given source or header file is released under.
 
 %package	examples
 Summary:	Example clients using %{name}
-Group:		Applications/Internet
 License:	BSD
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
@@ -91,7 +88,6 @@ included documentation for more details.)
 
 %package	python2
 Summary:	Python bindings for %{name}
-Group:		Development/Languages
 License:	Boost
 BuildRequires:  python2-devel
 %if 0%{?fedora} > 28
@@ -110,7 +106,6 @@ Python applications.
 %if %{with python3}
 %package	python3
 Summary:	Python bindings for %{name}
-Group:		Development/Languages
 License:	Boost
 BuildRequires:  python3-devel
 BuildRequires:	pkgconfig(python3)
