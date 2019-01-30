@@ -1,0 +1,10 @@
+--- libtorrent-rasterbar-1.1.9/include/libtorrent/config.hpp~	2019-01-30 16:22:52.936733759 +0000
++++ libtorrent-rasterbar-1.1.9/include/libtorrent/config.hpp	2019-01-30 16:22:55.472730824 +0000
+@@ -51,6 +51,7 @@
+ #include <boost/asio/detail/config.hpp>
+ #include <boost/version.hpp>
+ #include <boost/detail/endian.hpp>
++#include <boost/core/noncopyable.hpp>
+ #include <stdio.h> // for snprintf
+ #include <limits.h> // for IOV_MAX
+ 
