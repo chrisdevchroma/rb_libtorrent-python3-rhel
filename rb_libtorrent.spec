@@ -15,20 +15,19 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.9
-Release:	2%{?dist}
+Version:	1.1.12
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_9/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_12/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-Patch0:		%{name}-1.0.1-boost_noncopyable.patch
-Patch1:		%{name}-1.1.9-system-tommath.patch
-Patch2:		disable_failed_test.patch
-Patch3:		%{name}-boost169.patch
+Patch0:		%{name}-1.1.9-system-tommath.patch
+Patch1:		disable_failed_test.patch
+Patch2:		%{name}-boost169.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -122,10 +121,9 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-#patch0 -p1
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
@@ -278,6 +276,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Wed Jan 30 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.12-1
+- Upgrade to 1.1.12
+
 * Wed Jan 30 2019 Jonathan Wakely <jwakely@redhat.com> - 1.1.9-2
 - Add patch for Boost 1.69 header changes
 
