@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.12
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -276,6 +276,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Thu Jan 31 2019 Kalev Lember <klember@redhat.com> - 1.1.12-2
+- Rebuilt for Boost 1.69
+
 * Wed Jan 30 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.12-1
 - Upgrade to 1.1.12
 
