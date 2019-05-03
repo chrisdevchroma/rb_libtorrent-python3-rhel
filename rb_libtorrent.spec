@@ -160,7 +160,7 @@ pushd build
 	--enable-examples \
 	--enable-python-binding \
 	--with-boost-system=boost_system \
-	--with-boost-python=boost_python \
+	--with-boost-python=boost_python%{python2_version_nodots} \
 	--with-libiconv \
 	--enable-export-all
 
