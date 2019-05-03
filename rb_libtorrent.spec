@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.13
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -180,7 +180,7 @@ pushd build-python3
 	--enable-examples \
 	--enable-python-binding \
 	--with-boost-system=boost_system \
-	--with-boost-python=boost_python3 \
+	--with-boost-python=boost_python%{python3_version_nodots} \
 	--with-libiconv \
 	--enable-export-all
 
@@ -276,6 +276,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Fri May 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-2
+- Fix python3 build (RHBZ#1705690)
+
 * Fri May 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-1
 - Upgrade to 1.1.13
 
