@@ -15,13 +15,13 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.12
-Release:	2%{?dist}
+Version:	1.1.13
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_12/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_13/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
@@ -276,6 +276,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Fri May 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-1
+- Upgrade to 1.1.13
+
 * Thu Jan 31 2019 Kalev Lember <klember@redhat.com> - 1.1.12-2
 - Rebuilt for Boost 1.69
 
