@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.13
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -31,7 +31,7 @@ Patch2:		%{name}-boost169.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
-ExcludeArch:    aarch64
+ExcludeArch:	aarch64
 %endif
 
 BuildRequires:	asio-devel
@@ -40,10 +40,12 @@ BuildRequires:	boost-devel
 BuildRequires:	gcc-c++
 BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
+%if 0%{?fedora} < 31 || 0%{?rhel}
 BuildRequires:	pkgconfig(python2)
+%endif
 BuildRequires:	libtool
-BuildRequires:  util-linux
-BuildRequires:  chrpath
+BuildRequires:	util-linux
+BuildRequires:	chrpath
 
 %description
 %{name} is a C++ library that aims to be a good alternative to all
@@ -86,28 +88,30 @@ show how to make use of its various features. (Due to potential
 namespace conflicts, a couple of the examples had to be renamed. See the
 included documentation for more details.)
 
+%if 0%{?fedora} < 31 || 0%{?rhel}
 %package	python2
 Summary:	Python bindings for %{name}
 License:	Boost
-BuildRequires:  python2-devel
+BuildRequires:	python2-devel
 %if 0%{?fedora} > 28
 BuildRequires:	boost-python2-devel
 %endif
 BuildRequires:	python2-setuptools
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-Provides:       %{name}-python
-Obsoletes:      %{name}-python < 1.0.9
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Provides:	%{name}-python
+Obsoletes:	%{name}-python < 1.0.9
 
 %description	python2
 The %{name}-python2 package contains Python language bindings
 (the 'libtorrent' module) that allow it to be used from within
 Python applications.
+%endif
 
 %if %{with python3}
 %package	python3
 Summary:	Python bindings for %{name}
 License:	Boost
-BuildRequires:  python3-devel
+BuildRequires:	python3-devel
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	boost-python3-devel
 BuildRequires:	python3-setuptools
@@ -152,6 +156,7 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 mkdir -p build/bindings build-python3/bindings
 echo build/bindings build-python3/bindings | xargs -n 1 cp -r bindings/python
 
+%if 0%{?fedora} < 31 || 0%{?rhel}
 # Build the lib with Python 2 bindings
 export PYTHON=/usr/bin/python%{python2_version}
 pushd build
@@ -163,6 +168,23 @@ pushd build
 	--with-boost-python=boost_python%{python2_version_nodots} \
 	--with-libiconv \
 	--enable-export-all
+%else
+# Build the lib with Python 3 bindings
+# This is ugly but can't think of an easier way to build the binding
+export CPPFLAGS="$CPPFLAGS $(python%{python3_version}-config --includes)"
+export LDFLAGS="$LDFLAGS -L%{_builddir}/libtorrent-rasterbar-%{version}/build/src/.libs"
+export PYTHON=/usr/bin/python%{python3_version}
+export PYTHON_LDFLAGS="$PYTHON_LDFLAGS $(python%{python3_version}-config --libs)"
+pushd build
+%configure \
+	--disable-static \
+	--enable-examples \
+	--enable-python-binding \
+	--with-boost-system=boost_system \
+	--with-boost-python=boost_python%{python3_version_nodots} \
+	--with-libiconv \
+	--enable-export-all
+%endif
 
 make V=1 %{?_smp_mflags}
 popd
@@ -221,12 +243,16 @@ chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
 chrpath -d %{buildroot}%{_bindir}/stats_counters
 chrpath -d %{buildroot}%{_bindir}/torrent_client_test
 chrpath -d %{buildroot}%{_bindir}/upnp_test
-## Install the python binding module.
+%if 0%{?fedora} < 31 || 0%{?rhel}
+## Install the python 2 binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 popd && popd
+%else
+popd
+%endif
 
-%if %{with python3}
+%if 0%{?with_python3}
 pushd build-python3/bindings/python
 %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
 popd
@@ -261,13 +287,15 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %{_bindir}/stats_counters
 %{_bindir}/upnp_test
 
+%if 0%{?fedora} < 31 || 0%{?rhel}
 %files	python2
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
 %{python2_sitearch}/python_libtorrent-%{version}-py2.?.egg-info
 %{python2_sitearch}/libtorrent.so
+%endif
 
-%if %{with python3}
+%if 0%{?with_python3}
 %files	python3
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
@@ -276,6 +304,10 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Wed Jul 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-3
+- Drop python 2 bindings in F31+
+  https://fedoraproject.org/wiki/Changes/F31_Mass_Python_2_Package_Removal
+
 * Fri May 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-2
 - Fix python3 build (RHBZ#1705690)
 
