@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.13
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -304,6 +304,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.13-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Wed Jul 03 2019 Michael Cronenworth <mike@cchtml.com> - 1.1.13-3
 - Drop python 2 bindings in F31+
   https://fedoraproject.org/wiki/Changes/F31_Mass_Python_2_Package_Removal
