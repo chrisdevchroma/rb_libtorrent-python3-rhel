@@ -1,7 +1,9 @@
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %bcond_without python3
+%bcond_with python2
 %else
 %bcond_with python3
+%bcond_without python2
 %endif
 
 # we don't want to provide private python extension libs
@@ -16,7 +18,7 @@
 
 Name:		rb_libtorrent
 Version:	1.1.13
-Release:	5%{?dist}
+Release:	5a%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -40,9 +42,6 @@ BuildRequires:	boost-devel
 BuildRequires:	gcc-c++
 BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
-%if 0%{?fedora} < 31 || 0%{?rhel}
-BuildRequires:	pkgconfig(python2)
-%endif
 BuildRequires:	libtool
 BuildRequires:	util-linux
 BuildRequires:	chrpath
@@ -88,11 +87,12 @@ show how to make use of its various features. (Due to potential
 namespace conflicts, a couple of the examples had to be renamed. See the
 included documentation for more details.)
 
-%if 0%{?fedora} < 31 || 0%{?rhel}
+%if %{with python2}
 %package	python2
 Summary:	Python bindings for %{name}
 License:	Boost
 BuildRequires:	python2-devel
+BuildRequires:	pkgconfig(python2)
 %if 0%{?fedora} > 28
 BuildRequires:	boost-python2-devel
 %endif
@@ -156,7 +156,7 @@ sed -i -e 's|"/lib /usr/lib|"/%{_lib} %{_libdir}|' configure
 mkdir -p build/bindings build-python3/bindings
 echo build/bindings build-python3/bindings | xargs -n 1 cp -r bindings/python
 
-%if 0%{?fedora} < 31 || 0%{?rhel}
+%if %{with python2}
 # Build the lib with Python 2 bindings
 export PYTHON=/usr/bin/python%{python2_version}
 pushd build
@@ -168,7 +168,7 @@ pushd build
 	--with-boost-python=boost_python%{python2_version_nodots} \
 	--with-libiconv \
 	--enable-export-all
-%else
+%else #%{with python3}
 # Build the lib with Python 3 bindings
 # This is ugly but can't think of an easier way to build the binding
 export CPPFLAGS="$CPPFLAGS $(python%{python3_version}-config --includes)"
@@ -189,13 +189,13 @@ pushd build
 make V=1 %{?_smp_mflags}
 popd
 
-%if 0%{?with_python3}
+%if %{with python3} && %{with python2}
+# Circumvent building it twice when only building with python3
 # This is ugly but can't think of an easier way to build the binding
 export CPPFLAGS="$CPPFLAGS $(python%{python3_version}-config --includes)"
 export LDFLAGS="$LDFLAGS -L%{_builddir}/libtorrent-rasterbar-%{version}/build/src/.libs"
 export PYTHON=/usr/bin/python%{python3_version}
 export PYTHON_LDFLAGS="$PYTHON_LDFLAGS $(python%{python3_version}-config --libs)"
-
 pushd build-python3
 %configure \
 	--disable-static \
@@ -217,7 +217,8 @@ make V=1 %{?_smp_mflags}
 #make %{?_smp_mflags} check
 #popd
 
-#%if %{with python3}
+#%if %{with python3} && %{with python2}
+# Circumvent testing it twice when only building with python3
 #pushd build-python3
 #cp -Rp ../test/mutable_test_torrents ../test/test_torrents ./test/
 #cp ../test/*.{cpp,hpp,py,gz} ./test/
@@ -243,16 +244,20 @@ chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
 chrpath -d %{buildroot}%{_bindir}/stats_counters
 chrpath -d %{buildroot}%{_bindir}/torrent_client_test
 chrpath -d %{buildroot}%{_bindir}/upnp_test
-%if 0%{?fedora} < 31 || 0%{?rhel}
+%if %{with python2}
 ## Install the python 2 binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 popd && popd
 %else
-popd
+## Install the python 3 binding module.
+pushd bindings/python
+%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+popd && popd
 %endif
 
-%if 0%{?with_python3}
+%if %{with python3} && %{with python2}
+# Circumvent copying it twice when only building with python3
 pushd build-python3/bindings/python
 %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
 popd
@@ -287,7 +292,7 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %{_bindir}/stats_counters
 %{_bindir}/upnp_test
 
-%if 0%{?fedora} < 31 || 0%{?rhel}
+%if %{with python2}
 %files	python2
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
@@ -295,7 +300,7 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %{python2_sitearch}/libtorrent.so
 %endif
 
-%if 0%{?with_python3}
+%if %{with python3}
 %files	python3
 %doc AUTHORS ChangeLog
 %license COPYING.Boost
@@ -304,6 +309,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Sun Oct 27 2019 chrisdevchroma <chris10ros@gmail.com> - 1.1.13-5a
+- Drop python 2 bindings in RHEL8+
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 1.1.13-5
 - Rebuilt for Python 3.8
 
