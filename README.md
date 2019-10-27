@@ -17,6 +17,9 @@ sudo dnf install boost-devel boost-python3-devel chrpath python3-devel
 4. Build & install dependency asio-devel -> see https://github.com/chrisdevchroma/asio-rhel
 5. Build & install dependency libtommath & libtommath-devel -> see https://github.com/chrisdevchroma/libtommath-rhel
 6. Clone repo with git and cd into the folder
+```bash
+cd rb_libtorrent-rhel
+```
 7. Create build/SOURCES dir
 ```bash
 mkdir -p build/SOURCES
