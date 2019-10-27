@@ -31,5 +31,10 @@ cp *.patch *COPYING* *README*.Fedora build/SOURCES
 ```
 10. Build package with rpmbuild
 ```bash
- rpmbuild --define "_topdir `pwd`/build" -ba rb_libtorrent.spec
+rpmbuild --define "_topdir `pwd`/build" -ba rb_libtorrent.spec
+```
+11. Install rb_libtorrent and rb_libtorrent-python3 packages
+```bash
+sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-1.1.13-5a.el8.x86_64.rpm
+sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-python3-1.1.13-5a.el8.x86_64.rpm
 ```
