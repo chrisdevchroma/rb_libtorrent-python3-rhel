@@ -15,19 +15,16 @@
 
 
 Name:		rb_libtorrent
-Version:	1.1.13
-Release:	5%{?dist}
+Version:	1.2.2
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_13/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_2_2/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-Patch0:		%{name}-1.1.9-system-tommath.patch
-Patch1:		disable_failed_test.patch
-Patch2:		%{name}-boost169.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -38,14 +35,12 @@ BuildRequires:	asio-devel
 BuildRequires:	automake
 BuildRequires:	boost-devel
 BuildRequires:	gcc-c++
-BuildRequires:	libtommath-devel
 BuildRequires:	pkgconfig(zlib)
 %if 0%{?fedora} < 31 || 0%{?rhel}
 BuildRequires:	pkgconfig(python2)
 %endif
 BuildRequires:	libtool
 BuildRequires:	util-linux
-BuildRequires:	chrpath
 
 %description
 %{name} is a C++ library that aims to be a good alternative to all
@@ -125,10 +120,6 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-rm include/libtorrent/tommath* src/mpi.cpp
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
 autoreconf -fiv
@@ -233,16 +224,7 @@ pushd build
 %{make_install}
 ## Do the renaming due to the somewhat limited %%_bindir namespace.
 rename client torrent_client %{buildroot}%{_bindir}/*
-## Fix rpath
-chrpath -d %{buildroot}%{_bindir}/bt_get
-chrpath -d %{buildroot}%{_bindir}/bt_get2
-chrpath -d %{buildroot}%{_bindir}/connection_tester
-chrpath -d %{buildroot}%{_bindir}/dump_torrent
-chrpath -d %{buildroot}%{_bindir}/make_torrent
-chrpath -d %{buildroot}%{_bindir}/simple_torrent_client
-chrpath -d %{buildroot}%{_bindir}/stats_counters
-chrpath -d %{buildroot}%{_bindir}/torrent_client_test
-chrpath -d %{buildroot}%{_bindir}/upnp_test
+
 %if 0%{?fedora} < 31 || 0%{?rhel}
 ## Install the python 2 binding module.
 pushd bindings/python
@@ -269,7 +251,7 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %{!?_licensedir:%global license %doc}
 %doc AUTHORS ChangeLog
 %license COPYING
-%{_libdir}/libtorrent-rasterbar.so.9*
+%{_libdir}/libtorrent-rasterbar.so.10*
 
 %files	devel
 %doc docs/
@@ -284,6 +266,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %{_bindir}/*torrent*
 %{_bindir}/bt_ge*
 %{_bindir}/connection_tester
+%{_bindir}/custom_storage
+%{_bindir}/dht_put
+%{_bindir}/session_log_alerts
 %{_bindir}/stats_counters
 %{_bindir}/upnp_test
 
@@ -304,6 +289,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Sun Oct 27 2019 Leigh Scott <leigh123linux@gmail.com> - 1.2.2-1
+- Upgrade to 1.2.2
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 1.1.13-5
 - Rebuilt for Python 3.8
 
