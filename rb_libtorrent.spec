@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.2.2
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -25,6 +25,8 @@ Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_2_2
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
+
+Patch0:		gcc10.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -120,6 +122,7 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
+%patch0 -p1
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
 autoreconf -fiv
@@ -289,6 +292,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Sat Dec 14 2019 Jeff Law <law@redhat.com> - 1.2.2-2
+- Fix missing #include for gcc-10
+
 * Sun Oct 27 2019 Leigh Scott <leigh123linux@gmail.com> - 1.2.2-1
 - Upgrade to 1.2.2
 
