@@ -16,7 +16,7 @@
 
 Name:		rb_libtorrent
 Version:	1.2.2
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
@@ -292,6 +292,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.2.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Sat Dec 14 2019 Jeff Law <law@redhat.com> - 1.2.2-2
 - Fix missing #include for gcc-10
 
