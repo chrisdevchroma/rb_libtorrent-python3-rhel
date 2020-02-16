@@ -226,7 +226,8 @@ pushd build
 ## Do the renaming due to the somewhat limited %%_bindir namespace.
 rename client torrent_client %{buildroot}%{_bindir}/*
 #%if 0%{?fedora} < 31 || 0%{?rhel} ## Drop python 2 bindings in F31+
-%if %{with python2} ## Drop python 2 bindings in F31+ & RHEL8+
+## Drop python 2 bindings in F31+ & RHEL8+
+%if %{with python2}
 ## Install the python 2 binding module.
 pushd bindings/python
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
