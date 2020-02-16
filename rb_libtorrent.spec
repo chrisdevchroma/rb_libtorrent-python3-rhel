@@ -17,18 +17,16 @@
 
 
 Name:		rb_libtorrent
-Version:	1.2.2
-Release:	3%{?dist}
+Version:	1.2.4
+Release:	1%{?dist}
 Summary:	A C++ BitTorrent library aiming to be the best alternative
 
 License:	BSD
 URL:		https://www.libtorrent.org
-Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_2_2/libtorrent-rasterbar-%{version}.tar.gz
+Source0:	https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_2_4/libtorrent-rasterbar-%{version}.tar.gz
 Source1:	%{name}-README-renames.Fedora
 Source2:	%{name}-COPYING.Boost
 Source3:	%{name}-COPYING.zlib
-
-Patch0:		gcc10.patch
 
 %if 0%{?rhel}
 # aarch64 is broken and I have zero interest in fixing it
@@ -122,7 +120,6 @@ Python applications.
 
 %prep
 %setup -q -n "libtorrent-rasterbar-%{version}"
-%patch0 -p1
 sed -i -e 's|include/libtorrent/version.hpp|../include/libtorrent/version.hpp|' configure configure.ac
 
 autoreconf -fiv
@@ -297,6 +294,9 @@ find %{buildroot} -name '*.la' -or -name '*.a' | xargs rm -f
 %endif # with python3
 
 %changelog
+* Tue Feb 11 2020 Leigh Scott <leigh123linux@googlemail.com> - 1.2.4-1
+- Upgrade to 1.2.4
+
 * Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.2.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
