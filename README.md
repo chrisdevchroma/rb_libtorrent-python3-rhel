@@ -15,29 +15,28 @@ sudo dnf install rpmdevtools
 sudo dnf install boost-devel boost-python3-devel chrpath python3-devel
 ```
 4. Build & install dependency asio-devel -> see https://github.com/chrisdevchroma/asio-rhel
-5. Build & install dependency libtommath & libtommath-devel -> see https://github.com/chrisdevchroma/libtommath-rhel
-6. Clone repo with git and cd into the folder
+5. Clone repo with git and cd into the folder
 ```bash
 cd rb_libtorrent-rhel
 ```
-7. Create build/SOURCES dir
+6. Create build/SOURCES dir
 ```bash
 mkdir -p build/SOURCES
 ```
-8. Download rb_libtorrent source tarball with spectool
+7. Download rb_libtorrent source tarball with spectool
 ```bash
 spectool -g -C build/SOURCES rb_libtorrent.spec
 ```
-9. Copy patches into build/SOURCES
+8. Copy patches into build/SOURCES
 ```bash
 cp *.patch *COPYING* *README*.Fedora build/SOURCES
 ```
-10. Build package with rpmbuild
+9. Build package with rpmbuild
 ```bash
 rpmbuild --define "_topdir `pwd`/build" -ba rb_libtorrent.spec
 ```
-11. Install rb_libtorrent and rb_libtorrent-python3 packages
+10. Install rb_libtorrent and rb_libtorrent-python3 packages
 ```bash
-sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-1.1.13-*.el8.x86_64.rpm
-sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-python3-1.1.13-*.el8.x86_64.rpm
+sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-*.el8.x86_64.rpm
+sudo dnf install ./build/RPMS/x86_64/rb_libtorrent-python3-*.el8.x86_64.rpm
 ```
